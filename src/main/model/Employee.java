@@ -1,9 +1,10 @@
 package model;
 
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
+import model.leave.Leave;
 
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Employee {
 
@@ -12,6 +13,7 @@ public class Employee {
     private int yearsOfService;
     private String name;
     private WorkHours workHours;
+    private List<Leave> leaveTaken;
 
     //TODO
     public void employee(String name, Date anniversary, Role role, WorkHours workHours) {

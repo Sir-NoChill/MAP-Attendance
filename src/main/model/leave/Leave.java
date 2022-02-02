@@ -1,4 +1,4 @@
-package model;
+package model.leave;
 
 public class Leave {
 }

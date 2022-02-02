@@ -1,4 +1,6 @@
-# My Personal Project
+# Attendance Tracker
+
+This project is an
 
 ## A subtitle
 

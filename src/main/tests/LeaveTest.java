@@ -1,4 +1,4 @@
-package model;
+package tests;
 
 public class LeaveTest {
 }
