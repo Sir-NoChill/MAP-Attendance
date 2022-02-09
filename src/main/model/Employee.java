@@ -1,7 +1,9 @@
 package model;
 
+import model.leave.Holiday;
 import model.leave.Leave;
 import model.leave.LeaveType;
+import model.leave.Sick;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -51,16 +53,30 @@ public class Employee {
         this.leaveTaken = new HashSet<Leave>();
         this.holidayLeft = 0;
         this.sickLeaveLeft = 0;
-        autoSetHolidayAccrualRate();
         autoSetYearsOfService();
+        autoSetHolidayAccrualRate();
     }
 
-    //TODO
     //REQUIRES:
     //MODIFIES: this
-    //EFFECTS:  appends an instance of Leave to leaveTaken
+    //EFFECTS: creates an instance of Leave with appropriate information
+    //         appends an instance of Leave to leaveTaken
+    //         reduces the appropriate type of leave left to the employee
     public void takeLeave(LocalDate date, LeaveType leaveType, String comment) {
-        // Stub//
+        Leave leave;
+        switch (leaveType) {
+            case SICK:
+                leave = new Sick(date,comment);
+                sickLeaveLeft -= 1;
+                break;
+            case HOLIDAY:
+                leave = new Holiday(date,comment);
+                holidayLeft -= 1;
+                break;
+            default:
+                leave = null; //SHould probably figure out how to throw an exception here
+        }
+        this.leaveTaken.add(leave);
     }
 
     //TODO
@@ -68,27 +84,41 @@ public class Employee {
     //MODIFIES: this
     //EFFECTS:  appends an instance of Leave to leaveTaken
     public void takeLeave(String date, LeaveType leaveType, String comment) {
-        // Stub//
+        Leave leave;
+        LocalDate date1 = LocalDate.parse(date);
+        switch (leaveType) {
+            case SICK:
+                leave = new Sick(date1,comment);
+                sickLeaveLeft -= 1;
+                break;
+            case HOLIDAY:
+                leave = new Holiday(date1,comment);
+                holidayLeft -= 1;
+                break;
+            default:
+                leave = null; //SHould probably figure out how to throw an exception here
+        }
+        this.leaveTaken.add(leave);
     }
 
-    //TODO This is a temporary function that should be replaced by a version in the Holiday class
-    // for
     //REQUIRES: holidayAccrued must be non-negative
     //MODIFIES: this
     //EFFECTS:  Changes the number of holiday available to this
     public void accrueHoliday() { //Don't date assholes
-
+        this.holidayLeft += holidayAccrual;
     }
 
-    //TODO based on the month accrual in the calendar year. Mom releases the sick time on the year every year and
-    // the time is reset on the same interval.
     //REQUIRES: sickDaysAccrued must be non-negative
     //MODIFIES: this
     //EFFECTS:  Changes the number of sickDays available to this
     public void accrueSickDays() {
-
+        this.sickLeaveLeft = sickLeaveAccrual;
     }
 
+    //REQUIRES: yearsOFService be non-negative
+    //MODIFIES: this
+    //EFFECTS: Sets an employee holiday accrual rate
+    //note: employee accrual rate must happen after years of service is changed.
     public void autoSetHolidayAccrualRate() {
         switch (this.yearsOfService) {
             case 0:
@@ -123,14 +153,18 @@ public class Employee {
         }
     }
 
+    //REQUIRES: anniversary be now or in the past
+    //MODIFIES: this
+    //EFFECTS: sets the years of service of an employee based on their anniversary
+    //note: this is done in zero based indexing
     public void autoSetYearsOfService() {
         this.yearsOfService = Period.between(this.anniversary,LocalDate.now()).getYears();
     }
 
 
-    public double getSickLeaveAccrual() {
-        return sickLeaveAccrual;
-    }
+    // public double getSickLeaveAccrual() { //Removed,as sick leave accrual is a constant
+    //     return sickLeaveAccrual;
+    // }
 
     public LocalDate getAnniversary() {
         return anniversary;

@@ -78,11 +78,11 @@ class EmployeeTest {
 
         testEmployee1.takeLeave("2022-08-16", SICK, "Covid-19");
         assertEquals(1, testEmployee1.getLeaveTaken().size());
-        assertEquals(2,testEmployee1.getHolidayLeft());
+        assertEquals(1,testEmployee1.getSickLeaveLeft());
 
         testEmployee1.takeLeave(LocalDate.now(), HOLIDAY, "keep your cardiologist's number on hand");
         assertEquals(2,testEmployee1.getLeaveTaken().size());
-        assertEquals(1,testEmployee1.getHolidayLeft());
+        assertEquals(2,testEmployee1.getHolidayLeft());
     }
 
     @Test
