@@ -39,6 +39,7 @@ class EmployeeTest {
         assertTrue(testEmployee1.getLeaveTaken().isEmpty());
         assertEquals("Jane",testEmployee1.getSupervisor());
         assertEquals("Criminal Law",testEmployee1.getDepartment());
+        assertEquals(23,testEmployee1.getHolidayAccrual());
     }
 
     @Test
@@ -53,6 +54,7 @@ class EmployeeTest {
         assertTrue(testEmployee2.getLeaveTaken().isEmpty());
         assertEquals("Kane",testEmployee2.getSupervisor());
         assertEquals("Realty",testEmployee2.getDepartment());
+        assertEquals(0,testEmployee2.getHolidayAccrual());
     }
 
     @Test
@@ -85,24 +87,129 @@ class EmployeeTest {
 
     @Test
     public void testAccrueVacation() {
-        testEmployee1.setHolidayAccrualRate(6.5);
+        testEmployee1.setHolidayAccrual(6);
         testEmployee1.accrueHoliday();
-        assertEquals(6.5,testEmployee1.getHolidayLeft());
+        assertEquals(6,testEmployee1.getHolidayLeft());
 
-        testEmployee1.setHolidayAccrualRate(3);
+        testEmployee1.setHolidayAccrual(3);
         testEmployee1.accrueHoliday();
-        assertEquals(9.5,testEmployee1.getHolidayLeft());
+        assertEquals(9,testEmployee1.getHolidayLeft());
     }
 
     @Test
     public void testAccrueSickDays() {
-        testEmployee1.setSickLeaveAccrual(6.5);
         testEmployee1.accrueSickDays();
-        assertEquals(6.5,testEmployee1.getSickLeaveLeft());
+        assertEquals(6,testEmployee1.getSickLeaveLeft());
 
-        testEmployee1.setSickLeaveAccrual(3);
         testEmployee1.accrueSickDays();
-        assertEquals(9.5,testEmployee1.getSickLeaveLeft());
+        assertEquals(6,testEmployee1.getSickLeaveLeft());
     }
 
+    @Test
+    public void setHolidayAccrualRateCase1() {
+        testEmployee1.setAnniversary(LocalDate.now());
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(0,testEmployee1.getYearsOfService());
+        assertEquals(0,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase2() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(1));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(1,testEmployee1.getYearsOfService());
+        assertEquals(10,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase3() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(2));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(2,testEmployee1.getYearsOfService());
+        assertEquals(15,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase4() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(3));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(3,testEmployee1.getYearsOfService());
+        assertEquals(15,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase5() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(4));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(4,testEmployee1.getYearsOfService());
+        assertEquals(15,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase6() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(5));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(5,testEmployee1.getYearsOfService());
+        assertEquals(16,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase7() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(6));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(6,testEmployee1.getYearsOfService());
+        assertEquals(17,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase8() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(7));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(7,testEmployee1.getYearsOfService());
+        assertEquals(17,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase9() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(8));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(8,testEmployee1.getYearsOfService());
+        assertEquals(20,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase10() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(9));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(9,testEmployee1.getYearsOfService());
+        assertEquals(21,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCase11() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(10));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(10,testEmployee1.getYearsOfService());
+        assertEquals(22,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void setHolidayAccrualRateCaseDefault() {
+        testEmployee1.setAnniversary(LocalDate.now().minusYears(11));
+        testEmployee1.autoSetYearsOfService();
+        testEmployee1.autoSetHolidayAccrualRate();
+        assertEquals(11,testEmployee1.getYearsOfService());
+        assertEquals(23,testEmployee1.getHolidayAccrual());
+    }
 }

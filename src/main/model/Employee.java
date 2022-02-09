@@ -32,12 +32,12 @@ public class Employee {
         this.workHours = workHours;
         this.leaveTaken = new HashSet<Leave>();
         this.supervisor = supervisor;
-        this.holidayLeft = 0; //FIXME Set it with the same amount that the individual should have
-        this.sickLeaveLeft = 0; //FIXME Should be set properly as ^^
-        this.yearsOfService = Period.between(this.anniversary,LocalDate.now()).getYears(); //FIXME vary
-                                                                                           // based on anniversary
+        this.holidayLeft = 0;
+        this.sickLeaveLeft = 0;
+        autoSetYearsOfService();
         this.holidayAccrual = 0;
         this.department = department; //TODO make the department an Enum??
+        autoSetHolidayAccrualRate();
     }
 
     public Employee(String anniversary, Role role, String name, WorkHours workHours,
@@ -51,8 +51,8 @@ public class Employee {
         this.leaveTaken = new HashSet<Leave>();
         this.holidayLeft = 0;
         this.sickLeaveLeft = 0;
-        this.holidayAccrual = 0;
-        this.yearsOfService = Period.between(this.anniversary,LocalDate.now()).getYears();
+        autoSetHolidayAccrualRate();
+        autoSetYearsOfService();
     }
 
     //TODO
@@ -88,6 +88,45 @@ public class Employee {
     public void accrueSickDays() {
 
     }
+
+    public void autoSetHolidayAccrualRate() {
+        switch (this.yearsOfService) {
+            case 0:
+                this.holidayAccrual = 0;
+                break;
+            case 1:
+                this.holidayAccrual = 10;
+                break;
+            case 2:
+            case 3:
+            case 4:
+                this.holidayAccrual = 15;
+                break;
+            case 5:
+                this.holidayAccrual = 16;
+                break;
+            case 6:
+            case 7:
+                this.holidayAccrual = 17;
+                break;
+            case 8:
+                this.holidayAccrual = 20;
+                break;
+            case 9:
+                this.holidayAccrual = 21;
+                break;
+            case 10:
+                this.holidayAccrual = 22;
+                break;
+            default:
+                this.holidayAccrual = 23;
+        }
+    }
+
+    public void autoSetYearsOfService() {
+        this.yearsOfService = Period.between(this.anniversary,LocalDate.now()).getYears();
+    }
+
 
     public double getSickLeaveAccrual() {
         return sickLeaveAccrual;
@@ -169,15 +208,15 @@ public class Employee {
         this.department = department;
     }
 
-    public void setHolidayAccrualRate(double holidayAccrual) {
-        this.holidayAccrual = holidayAccrual;
-    }
-
     public void setHolidayLeft(double holidayLeft) {
         this.holidayLeft = holidayLeft;
     }
 
     public void setSickLeaveLeft(double sickLeaveLeft) {
         this.sickLeaveLeft = sickLeaveLeft;
+    }
+
+    public void setHolidayAccrual(double holidayAccrual) {
+        this.holidayAccrual = holidayAccrual;
     }
 }

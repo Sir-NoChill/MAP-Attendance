@@ -44,3 +44,5 @@ This includes changing the month / year and the corresponding dependancies.
     - [ ] Implemented
 
 Obama Junior High School, nagasaki, Japan
+
+![img.png](img.png)
