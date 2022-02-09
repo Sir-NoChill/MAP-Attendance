@@ -1,4 +1,8 @@
 package model.leave;
 
-public class Leave {
+import java.util.Date;
+import java.util.List;
+
+public interface Leave {
+    String displayLeave();
 }
