@@ -72,6 +72,42 @@ class EmployeeTest {
     }
 
     @Test
+    public void testSetAnniversaryString() {
+        testEmployee1.setAnniversary("2020-01-01");
+        assertEquals(LocalDate.parse("2020-01-01"),testEmployee1.getAnniversary());
+    }
+
+    @Test
+    public void testSetRole() {
+        testEmployee1.setRole(HUMAN_RESOURCES);
+        assertEquals(HUMAN_RESOURCES,testEmployee1.getRole());
+    }
+
+    @Test
+    public void testSetName() {
+        testEmployee1.setName("Harry");
+        assertEquals("Harry",testEmployee1.getName());
+    }
+
+    @Test
+    public void testSetWorkHours() {
+        testEmployee1.setWorkHours(SIX_HALF);
+        assertEquals(SIX_HALF,testEmployee1.getWorkHours());
+    }
+
+    @Test
+    public void testSetSupervisor() {
+        testEmployee1.setSupervisor("Carol");
+        assertEquals("Carol",testEmployee1.getSupervisor());
+    }
+
+    @Test
+    public void testSetDepartment() {
+        testEmployee1.setDepartment("Psych");
+        assertEquals("Psych",testEmployee1.getDepartment());
+    }
+
+    @Test
     public void testTakeLeave() {
         testEmployee1.setHolidayLeft(3);
         testEmployee1.setSickLeaveLeft(2);

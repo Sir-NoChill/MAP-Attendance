@@ -32,10 +32,10 @@ public class Employee {
         this.role = role;
         this.name = name;
         this.workHours = workHours;
-        this.leaveTaken = new HashSet<Leave>();
+        this.leaveTaken = new HashSet<>();
         this.supervisor = supervisor;
         this.holidayLeft = 0;
-        this.sickLeaveLeft = 0;
+        this.sickLeaveLeft = sickLeaveAccrual;
         autoSetYearsOfService();
         this.holidayAccrual = 0;
         this.department = department; //TODO make the department an Enum??
@@ -48,11 +48,11 @@ public class Employee {
         this.role = role;
         this.name = name;
         this.workHours = workHours;
-        this.supervisor = supervisor;
+        this.supervisor = supervisor; //TODO maybe make this of type employee?
         this.department = department;
-        this.leaveTaken = new HashSet<Leave>();
+        this.leaveTaken = new HashSet<>();
         this.holidayLeft = 0;
-        this.sickLeaveLeft = 0;
+        this.sickLeaveLeft = sickLeaveAccrual;
         autoSetYearsOfService();
         autoSetHolidayAccrualRate();
     }
@@ -74,7 +74,7 @@ public class Employee {
                 holidayLeft -= 1;
                 break;
             default:
-                leave = null; //SHould probably figure out how to throw an exception here
+                leave = null; //Should probably figure out how to throw an exception here
         }
         this.leaveTaken.add(leave);
     }
@@ -96,7 +96,7 @@ public class Employee {
                 holidayLeft -= 1;
                 break;
             default:
-                leave = null; //SHould probably figure out how to throw an exception here
+                leave = null; //Should probably figure out how to throw an exception here
         }
         this.leaveTaken.add(leave);
     }
@@ -160,6 +160,8 @@ public class Employee {
     public void autoSetYearsOfService() {
         this.yearsOfService = Period.between(this.anniversary,LocalDate.now()).getYears();
     }
+
+    //TODO create method display leave for employee
 
 
     // public double getSickLeaveAccrual() { //Removed,as sick leave accrual is a constant

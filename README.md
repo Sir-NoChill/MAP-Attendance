@@ -25,12 +25,19 @@ Custom leaves can (maybe, hopefully, probably) be specified, details to come
 
 ### Structure
 
-- Finalize the first draft of functionality available to an employee
-- Construct the tests for functionality of "Employee" class
-- Determine structure of the interface for "Leave" and determine the implementations in its subtypes
+- [ ] Finalize the first draft of functionality available to an employee
+- [ ] Construct the tests for functionality of "Employee" class
+- [ ] Specify/test/implement Update method for Employee
+- [ ] Finish the design of the leave classes
+- [ ] State class needs to be designed
+- [ ] Design console interface
+- [ ] Determine structure of the interface for "Leave" and determine the implementations in its subtypes
 
 ### UI
 
 To put it in a quote:
 > "HEEEEEEEEEEEEECK"
 > -Me
+
+That is to say, I don't know where to start but I'm sure I'll figure it out
+given about two days of google

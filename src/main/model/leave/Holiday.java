@@ -12,8 +12,14 @@ public class Holiday implements Leave {
         this.comments = comments;
     }
 
+    public Holiday(String dateOfLeave, String comments) {
+        this.dateOfLeave = LocalDate.parse(dateOfLeave);
+        this.comments = comments;
+    }
+
+    //EFFECTS: outputs the date and comments related to this instance of leave
     public String displayLeave() {
-        return "";
+        return this.dateOfLeave.toString() + " " + this.comments;
     }
 
     public LocalDate getDateOfLeave() {
@@ -31,4 +37,6 @@ public class Holiday implements Leave {
     public void setComments(String comments) {
         this.comments = comments;
     }
+
+    //TODO edit leave by referencing date (employee object?)
 }

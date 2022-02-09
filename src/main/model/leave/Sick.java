@@ -12,8 +12,14 @@ public class Sick implements Leave {
         this.comments = comments;
     }
 
+    public Sick(String dateOfLeave, String comments) {
+        this.dateOfLeave = LocalDate.parse(dateOfLeave);
+        this.comments = comments;
+    }
+
+
     public String displayLeave() {
-        return "";
+        return this.dateOfLeave.toString() + " " + this.comments;
     }
 
     public LocalDate getDateOfLeave() {
