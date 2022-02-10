@@ -21,11 +21,16 @@ public class StateTest {
     State initialState;
     State finalState;
     State currentState;
+    State employeeState;
 
     Employee testEmployee1;
     Employee testEmployee2;
     Employee testEmployee3;
     Employee testEmployee4;
+
+    Employee easyTestEmployee1;
+    Employee easyTestEmployee2;
+    Employee easyTestEmployee3;
 
     //@BeforeAll
     //public static void setupEmployees() {
@@ -36,10 +41,17 @@ public class StateTest {
         initialState = new State("2022-02-09");
         finalState = new State("2100-01-01");
         currentState = new State(LocalDate.now());
+
         testEmployee1 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
         testEmployee2 = new Employee(LocalDate.now(), HUMAN_RESOURCES, "Harold", SEVEN_HALF, "Kane", "Realty");
         testEmployee3 = new Employee("2015-08-07",ACCOUNTANT,"Merry",SEVEN,"Bane","Wills");
         testEmployee4 = new Employee(LocalDate.of(2017,5,13),ACCOUNTANT,"Carol",SIX_HALF,"Vane","Bert");
+
+        easyTestEmployee1 = new Employee("2002-01-01", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
+        easyTestEmployee2 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
+        easyTestEmployee3 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
+
+        employeeState = new State("2010-01-01");
     }
 
     @Test
@@ -55,14 +67,6 @@ public class StateTest {
     }
 
     @Test
-    public void testUpdateState() {
-        finalState.updateState(1);
-        assertEquals(LocalDate.parse("2100-01-02"),finalState.getCurrentDate());
-        finalState.updateState(1);
-        assertEquals(LocalDate.parse("2100-01-03"),finalState.getCurrentDate());
-    }
-
-    @Test
     public void testAddEmployee() {
         initialState.addEmployee(testEmployee1);
         assertEquals(1,initialState.getListOfEmployees().size());
@@ -73,11 +77,63 @@ public class StateTest {
     }
 
     @Test
-    public void testDisplayEmployee() {
+    public void testDisplayEmployee() { //FIXME
         initialState.addEmployee(testEmployee2);
         initialState.addEmployee(testEmployee1);
-        assertEquals("Harold, Jerry",initialState.displayEmployees());
+        assertEquals("Jerry, Harold, ",initialState.displayEmployees()); //FIXME should make this prettier
     }
 
+    @Test
+    public void testUpdateEmployeesCase1() { //No Change
+        employeeState.addEmployee(easyTestEmployee2);
+        employeeState.addEmployee(easyTestEmployee1);
+        employeeState.addEmployee(easyTestEmployee3);
+        employeeState.setCurrentDate(LocalDate.parse("2020-04-05"));//not an important date
+        employeeState.updateEmployees();
+        for (Employee employee : employeeState.getListOfEmployees()) {
+            assertEquals(0,employee.getHolidayLeft());
+        }
+    }
 
+    @Test
+    public void testUpdateEmployeesCase2() { //Holiday accrual
+        employeeState.addEmployee(easyTestEmployee2);
+        employeeState.addEmployee(easyTestEmployee1);
+        employeeState.addEmployee(easyTestEmployee3);
+        employeeState.setCurrentDate(LocalDate.parse("2002-01-01"));
+        employeeState.updateEmployees();
+        assertEquals(easyTestEmployee1.getHolidayAccrual(),easyTestEmployee1.getHolidayLeft());
+        assertEquals(0,easyTestEmployee2.getHolidayLeft());
+        assertEquals(0,easyTestEmployee3.getHolidayLeft());
+    }
+
+    @Test
+    public void testUpdateEmployeesCase3() { //Sick Leave accrual
+        easyTestEmployee1.setAnniversary("2002-05-06");
+        employeeState.addEmployee(easyTestEmployee2);
+        employeeState.addEmployee(easyTestEmployee1);
+        employeeState.addEmployee(easyTestEmployee3);
+        employeeState.setCurrentDate(LocalDate.parse("2019-12-31"));
+        employeeState.incrementDate();
+        for (Employee employee : employeeState.getListOfEmployees()) {
+            assertEquals(6,employee.getSickLeaveLeft());
+        }
+    }
+
+    @Test
+    public void testUpdateEmployeesCase4() { //Sick leave and holdiay accrual
+        employeeState.addEmployee(easyTestEmployee2);
+        employeeState.addEmployee(easyTestEmployee1);
+        employeeState.addEmployee(easyTestEmployee3);
+        employeeState.setCurrentDate(LocalDate.parse("2019-12-31"));
+        employeeState.incrementDate();
+        assertEquals(easyTestEmployee1.getHolidayAccrual(),easyTestEmployee1.getHolidayLeft());
+        assertEquals(6,easyTestEmployee1.getSickLeaveLeft());
+    }
+
+    @Test
+    public void testIncrementDate() {
+        employeeState.incrementDate();
+        assertEquals(LocalDate.parse("2010-01-02"),employeeState.getCurrentDate());
+    }
 }
