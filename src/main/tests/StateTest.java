@@ -2,14 +2,11 @@ package tests;
 
 import model.Employee;
 import model.State;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
-import java.time.Period;
-import java.util.Date;
 
 import static model.Role.*;
 import static model.Role.ACCOUNTANT;
