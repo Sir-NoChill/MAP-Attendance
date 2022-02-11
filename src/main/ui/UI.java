@@ -226,6 +226,15 @@ public class UI {
                 return "day ended, the new date is " + this.state.getCurrentDate();
 
             case "help":
+                String message = "New Employee - create a new employee\n"
+                        + "Take Leave - make an employee take leave on a given day\n"
+                        + "Get Leave Taken - show all leave taken by a particular employee\n"
+                        + "Get Employee Vacation Time - see how much vacation an employee has left\n"
+                        + "Get Employee Sick Leave Left - see how much sick leave an employee has left\n"
+                        + "Add/Change notes on leave taken - Change the note on a day of leave taken by the employee\n"
+                        + "Change Department - Change an employee's Department"
+                        + "Change Supervisor - Change an employee's Supervisor"
+                        + "End Day - Change the day to one day in the future";
                 System.out.println();
         }
 
