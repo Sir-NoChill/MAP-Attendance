@@ -149,6 +149,84 @@ public class StateTest {
     }
 
     @Test
+    public void testUpdateEmployeesCase7() { // Jacoco coverage for UpdateEmployees -01-nn sick leave accrual
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        testEmployee1.setSickLeaveLeft(0);
+        employeeState.setCurrentDate(LocalDate.parse("2019-01-18"));
+        employeeState.updateEmployees();
+
+        assertEquals(0,testEmployee1.getSickLeaveLeft());
+    }
+
+    @Test
+    public void testUpdateEmployeesCase8() { // Jacoco coverage for UpdateEmployees -nn-01 sick leave accrual
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        testEmployee1.setSickLeaveLeft(0);
+        employeeState.setCurrentDate(LocalDate.parse("2019-07-01"));
+        employeeState.updateEmployees();
+
+        assertEquals(0,testEmployee1.getSickLeaveLeft());
+    }
+
+    @Test
+    public void testUpdateEmployeesCase9() { // Jacoco coverage for UpdateEmployees -nn-nn sick leave accrual
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        testEmployee1.setSickLeaveLeft(0);
+        employeeState.setCurrentDate(LocalDate.parse("2019-07-18"));
+        employeeState.updateEmployees();
+
+        assertEquals(0,testEmployee1.getSickLeaveLeft());
+    }
+
+    @Test
+    public void testUpdateEmployeesCase10() { // Jacoco coverage for UpdateEmployees Anniversary Holiday accrual
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        testEmployee1.setHolidayLeft(0);
+        employeeState.setCurrentDate(LocalDate.parse("2019-03-04"));
+        employeeState.updateEmployees();
+
+        assertEquals(testEmployee1.getHolidayAccrual(),testEmployee1.getHolidayLeft());
+    }
+
+    @Test
+    public void testUpdateEmployeesCase11() { // Jacoco coverage for UpdateEmployees Anniversary Holiday accrual
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        testEmployee1.setHolidayLeft(0);
+        employeeState.setCurrentDate(LocalDate.parse("2019-04-04"));
+        employeeState.updateEmployees();
+
+        assertEquals(0,testEmployee1.getHolidayLeft());
+    }
+
+    @Test
+    public void testUpdateEmployeesCase12() { // Jacoco coverage for UpdateEmployees Anniversary Holiday accrual
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        testEmployee1.setHolidayLeft(0);
+        employeeState.setCurrentDate(LocalDate.parse("2019-03-05"));
+        employeeState.updateEmployees();
+
+        assertEquals(0,testEmployee1.getHolidayLeft());
+    }
+
+    @Test
+    public void testUpdateEmployeesCase13() { // Jacoco coverage for UpdateEmployees Anniversary Holiday accrual
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        testEmployee1.setHolidayLeft(0);
+        employeeState.setCurrentDate(LocalDate.parse("2019-04-05"));
+        employeeState.updateEmployees();
+
+        assertEquals(0,testEmployee1.getHolidayLeft());
+    }
+
+
+    @Test
     public void testIncrementDate() {
         employeeState.incrementDate();
         assertEquals(LocalDate.parse("2010-01-02"),employeeState.getCurrentDate());
