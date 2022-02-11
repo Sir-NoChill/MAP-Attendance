@@ -36,7 +36,7 @@ public class UI {
             }
 
             String output = processOperation(operation);
-            System.out.println("You have " + output);
+            System.out.println(output);
         }
     }
 
@@ -235,7 +235,7 @@ public class UI {
                         + "Change Department - Change an employee's Department"
                         + "Change Supervisor - Change an employee's Supervisor"
                         + "End Day - Change the day to one day in the future";
-                System.out.println();
+                System.out.println(message);
         }
 
         return "Operation Complete";
