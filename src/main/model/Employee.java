@@ -64,17 +64,12 @@ public class Employee {
     //         reduces the appropriate type of leave left to the employee
     public void takeLeave(LocalDate date, LeaveType leaveType, String comment) {
         Leave leave;
-        switch (leaveType) {
-            case SICK:
-                leave = new Sick(date,comment);
-                sickLeaveLeft -= 1;
-                break;
-            case HOLIDAY:
-                leave = new Holiday(date,comment);
-                holidayLeft -= 1;
-                break;
-            default:
-                leave = null; //Should probably figure out how to throw an exception here
+        if (leaveType == LeaveType.SICK) {
+            leave = new Sick(date, comment);
+            sickLeaveLeft -= 1;
+        } else {
+            leave = new Holiday(date, comment); //Should probably figure out how to throw an exception here
+            holidayLeft -= 1;
         }
         this.leaveTaken.add(leave);
     }
@@ -86,17 +81,13 @@ public class Employee {
     public void takeLeave(String date, LeaveType leaveType, String comment) {
         Leave leave;
         LocalDate date1 = LocalDate.parse(date);
-        switch (leaveType) {
-            case SICK:
-                leave = new Sick(date1,comment);
-                sickLeaveLeft -= 1;
-                break;
-            case HOLIDAY:
-                leave = new Holiday(date1,comment);
-                holidayLeft -= 1;
-                break;
-            default:
-                leave = null; //Should probably figure out how to throw an exception here
+        if (leaveType == LeaveType.SICK) {
+            leave = new Sick(date1, comment);
+            sickLeaveLeft -= 1;
+            //TODO make the method more general
+        } else {
+            leave = new Holiday(date1, comment); //Should probably figure out how to throw an exception here
+            holidayLeft -= 1;
         }
         this.leaveTaken.add(leave);
     }
@@ -119,6 +110,7 @@ public class Employee {
     //MODIFIES: this
     //EFFECTS: Sets an employee holiday accrual rate
     //note: employee accrual rate must happen after years of service is changed.
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public void autoSetHolidayAccrualRate() {
         switch (this.yearsOfService) {
             case 0:
@@ -167,6 +159,29 @@ public class Employee {
     // public double getSickLeaveAccrual() { //Removed,as sick leave accrual is a constant
     //     return sickLeaveAccrual;
     // }
+
+    //TODO Tesing
+    //REQUIRES: leaveTaken be non-empty
+    //EFFECTS:  Displays all leave taken by employee according to displayLeave
+    public String displayLeave() {
+        for (Leave leave :
+                this.leaveTaken) {
+            leave.displayLeave();
+        }
+        return null;//FIXME how do I test this
+    }
+
+    //TODO testing
+    //EFFECTS:  Returns an instance of leave with matching date.
+    public Leave searchLeave(String date) {
+        LocalDate realDate = LocalDate.parse(date);
+        for (Leave leave: this.leaveTaken) {
+            if (leave.getDateOfLeave().equals(realDate)) {
+                return leave;
+            }
+        }
+        return null;
+    }
 
     public LocalDate getAnniversary() {
         return anniversary;

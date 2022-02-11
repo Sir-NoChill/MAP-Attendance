@@ -1,6 +1,7 @@
 package tests;
 
 import model.Employee;
+import model.leave.Leave;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -108,7 +109,7 @@ class EmployeeTest {
     }
 
     @Test
-    public void testTakeLeave() {
+    public void testTakeLeaveCase1() {
         testEmployee1.setHolidayLeft(3);
         testEmployee1.setSickLeaveLeft(2);
 
@@ -119,6 +120,26 @@ class EmployeeTest {
         testEmployee1.takeLeave(LocalDate.now(), HOLIDAY, "keep your cardiologist's number on hand");
         assertEquals(2,testEmployee1.getLeaveTaken().size());
         assertEquals(2,testEmployee1.getHolidayLeft());
+    }
+
+    @Test
+    public void testTakeLeaveCase2() {
+        testEmployee1.setHolidayLeft(4);
+
+        testEmployee1.takeLeave("2020-07-08", HOLIDAY, "Off to commit arson");
+        assertEquals(3,testEmployee1.getHolidayLeft());
+        testEmployee1.takeLeave("2020-07-09",HOLIDAY,"Commited some arson, now in jail");
+        assertEquals(2,testEmployee1.getHolidayLeft());
+    }
+
+    @Test
+    public void testTakeLeaveCase3() {
+        testEmployee1.setSickLeaveLeft(4);
+
+        testEmployee1.takeLeave(LocalDate.now(),SICK,"Ash in lungs from arson");
+        assertEquals(3,testEmployee1.getSickLeaveLeft());
+        testEmployee1.takeLeave("2007-04-03",SICK,"Got stabbed");
+        assertEquals(2,testEmployee1.getSickLeaveLeft());
     }
 
     @Test
@@ -247,5 +268,23 @@ class EmployeeTest {
         testEmployee1.autoSetHolidayAccrualRate();
         assertEquals(11,testEmployee1.getYearsOfService());
         assertEquals(23,testEmployee1.getHolidayAccrual());
+    }
+
+    @Test
+    public void testSearchLeaveCase1() {
+        testEmployee1.takeLeave("2020-07-08", HOLIDAY, "Off to commit arson");
+        testEmployee1.takeLeave("2020-07-09",HOLIDAY,"Commited some arson, now in jail");
+
+        testEmployee1.takeLeave(LocalDate.now(),SICK,"Ash in lungs from arson");
+        testEmployee1.takeLeave("2007-04-03",SICK,"Got stabbed");
+
+        Leave searchResult = testEmployee1.searchLeave("2020-07-08");
+        assertNotNull(searchResult);
+    }
+
+    @Test
+    public void testSearchLeaveCase2() {
+        Leave searchResult = testEmployee2.searchLeave("2020-07-08");
+        assertNull(searchResult);
     }
 }

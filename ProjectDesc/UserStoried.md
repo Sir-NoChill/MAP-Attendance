@@ -45,4 +45,4 @@ This includes changing the month / year and the corresponding dependancies.
 
 Obama Junior High School, nagasaki, Japan
 
-![img.png](img.png)
+![img.png](../img.png)
