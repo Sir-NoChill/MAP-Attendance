@@ -129,6 +129,26 @@ public class StateTest {
     }
 
     @Test
+    public void testUpdateEmployeesCase5() { // Jacoco coverage for UpdateEmployees -01-01 sick leave accrual
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        employeeState.setCurrentDate(LocalDate.parse("2019-01-01"));
+        employeeState.updateEmployees();
+
+        assertEquals(6,testEmployee1.getSickLeaveLeft());
+    }
+
+    @Test
+    public void testUpdateEmployeesCase6() { // Jacoco coverage for UpdateEmplyees anniversary
+        testEmployee1.setAnniversary("2020-03-04");
+        employeeState.addEmployee(testEmployee1);
+        employeeState.setCurrentDate(LocalDate.parse("2019-03-04"));
+        employeeState.updateEmployees();
+
+        assertEquals(testEmployee1.getHolidayAccrual(),testEmployee1.getHolidayLeft());
+    }
+
+    @Test
     public void testIncrementDate() {
         employeeState.incrementDate();
         assertEquals(LocalDate.parse("2010-01-02"),employeeState.getCurrentDate());
