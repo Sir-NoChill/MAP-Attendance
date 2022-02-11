@@ -1,4 +1,4 @@
-package tests;
+package model;
 
 import model.Employee;
 import model.State;

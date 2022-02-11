@@ -1,4 +1,4 @@
-package tests;
+package model;
 
 import model.leave.*;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +41,7 @@ public class LeaveTest {
     @Test
     public void testDisplayLeave() {
         assertEquals("2023-12-02" + " " + "Dildo, NL, Canada", holiday1.displayLeave());
-        assertEquals(LocalDate.now().toString() + " " + "Obama Junior High School, nagasaki, Japan",
+        assertEquals(LocalDate.now() + " " + "Obama Junior High School, nagasaki, Japan",
                 holiday2.displayLeave());
         assertEquals("2022-04-02" + " " + "Covid-19", sick1.displayLeave());
         assertEquals("2021-08-11" + " " + "Hit by lightning thrice, went to hospital",
