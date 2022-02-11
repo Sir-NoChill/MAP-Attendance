@@ -158,20 +158,8 @@ public class Employee {
 
     // public double getSickLeaveAccrual() { //Removed,as sick leave accrual is a constant
     //     return sickLeaveAccrual;
-    // }
+    //}
 
-    //TODO Tesing
-    //REQUIRES: leaveTaken be non-empty
-    //EFFECTS:  Displays all leave taken by employee according to displayLeave
-    public String displayLeave() {
-        for (Leave leave :
-                this.leaveTaken) {
-            leave.displayLeave();
-        }
-        return null;//FIXME how do I test this
-    }
-
-    //TODO testing
     //EFFECTS:  Returns an instance of leave with matching date.
     public Leave searchLeave(String date) {
         LocalDate realDate = LocalDate.parse(date);

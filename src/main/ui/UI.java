@@ -155,7 +155,7 @@ public class UI {
             case "Get Leave Taken":
                 System.out.println("please enter the employee name who's leave you want to see");
                 String name1 = scanner.nextLine();
-                System.out.println(searchEmployee(name1).displayLeave());
+                System.out.println(displayLeave(searchEmployee(name1)));
 
                 return "Leave Taken";
 
@@ -243,6 +243,17 @@ public class UI {
             }
         }
         return null;
+    }
+
+    //REQUIRES: leaveTaken be non-empty
+    //EFFECTS:  Displays all leave taken by employee according to displayLeave
+    public String displayLeave(Employee employee) {
+        StringBuilder output = new StringBuilder();
+        for (Leave leave :
+                employee.getLeaveTaken()) {
+            output.append(leave.displayLeave());
+        }
+        return output.toString();
     }
 
     //EFFECTS: Entry point for console application
