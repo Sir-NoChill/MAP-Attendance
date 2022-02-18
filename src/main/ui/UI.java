@@ -10,6 +10,7 @@ import model.leave.LeaveType;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+// Initial point of entry for the program
 public class UI {
     private final Scanner scanner;
     private State state;

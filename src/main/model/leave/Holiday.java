@@ -2,6 +2,7 @@ package model.leave;
 
 import java.time.LocalDate;
 
+// Represents holiday leave
 public class Holiday implements Leave {
 
     private LocalDate dateOfLeave;

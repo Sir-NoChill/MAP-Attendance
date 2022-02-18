@@ -2,6 +2,7 @@ package model.leave;
 
 import java.time.LocalDate;
 
+// Represents sick leave
 public class Sick implements Leave {
 
     LocalDate dateOfLeave;

@@ -10,6 +10,7 @@ import java.time.Period;
 import java.util.HashSet;
 import java.util.Set;
 
+// Represents an employee
 public class Employee {
 
     private LocalDate anniversary;

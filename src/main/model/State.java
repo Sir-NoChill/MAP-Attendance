@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
+// Represents a state of the program at a given date
 import static java.time.LocalDate.parse;
 
 public class State {
