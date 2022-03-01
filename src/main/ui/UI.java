@@ -6,22 +6,26 @@ import model.State;
 import model.WorkHours;
 import model.leave.Leave;
 import model.leave.LeaveType;
+import persistance.JsonReader;
+import persistance.JsonWriter;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.Scanner;
 
 // Initial point of entry for the program
 public class UI {
     private final Scanner scanner;
+    private static final String JSON_STORE = "./data/programState.json";
     private State state;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
-    public UI() {
+    public UI() throws FileNotFoundException {
         this.scanner = new Scanner(System.in);
         this.state = new State(LocalDate.now());
+        this.jsonReader = new JsonReader(JSON_STORE);
+        this.jsonWriter = new JsonWriter(JSON_STORE);
         processOperations();
     }
 
@@ -77,10 +81,6 @@ public class UI {
                         role = Role.ACCOUNTANT;
                         break;
 
-                    case "Legal Assistant":
-                        role = Role.LEGAL_ASSISTANT;
-                        break;
-
                     default:
                         role = Role.LEGAL_ASSISTANT;
                         break;
@@ -127,24 +127,10 @@ public class UI {
                 String comment;
                 LeaveType leaveType;
 
-                System.out.println("Please input the type of leave (Vacation or Sick)");
+                System.out.println("Please input the type of leave (Holiday or Sick)");
                 potentialLeave = scanner.nextLine();
 
-                switch (potentialLeave) {
-                    case "Vacation":
-                        leaveType = LeaveType.HOLIDAY;
-                        break;
-
-                    case "Sick":
-                        leaveType = LeaveType.SICK;
-                        break;
-
-                    default:
-                        System.out.println("the type you entered has no match");
-                        //While loop?
-                        leaveType = LeaveType.SICK;
-                        break;
-                }
+                leaveType = stringToLeaveType(potentialLeave);
 
                 System.out.println("Please enter the date of leave ('yyyy-mm-dd')");
                 date = scanner.nextLine();
@@ -232,22 +218,20 @@ public class UI {
                 return "day ended, the new date is " + this.state.getCurrentDate();
 
             case "Save":
+                saveProgramState();
+
+                return "";
 
             case "Load":
+                loadProgramState();
+
+                return "";
 
             case "help":
-                String message = "New Employee - create a new employee\n"
-                        + "Take Leave - make an employee take leave on a given day\n"
-                        + "Get Leave Taken - show all leave taken by a particular employee\n"
-                        + "Get Employee Vacation Time - see how much vacation an employee has left\n"
-                        + "Get Employee Sick Leave Left - see how much sick leave an employee has left\n"
-                        + "Add/Change notes on leave taken - Change the note on a day of leave taken by the employee\n"
-                        + "Change Department - Change an employee's Department\n"
-                        + "Change Supervisor - Change an employee's Supervisor\n"
-                        + "End Day - Change the day to one day in the future\n"
-                        + "Save - Saves the current state of the program to a file named \'save.txt\'\n"
-                        + "Load - Loads a state from a given file directory, provided by the user";
-                System.out.println(message);
+                help();
+
+                return "";
+
         }
 
         return "Operation Complete";
@@ -277,5 +261,58 @@ public class UI {
         return output.toString();
     }
 
+    private void saveProgramState() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(state);
+            jsonWriter.close();
+            System.out.println("Saved state at " + LocalDate.now() + " to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
 
+    private void loadProgramState() {
+        try {
+            state = jsonReader.read();
+            System.out.println("Loaded state from file successfully");
+        } catch (IOException e) {
+            System.out.println("Unable to read file at: " + JSON_STORE);
+        }
+    }
+
+    private void help() {
+        String message = "New Employee - create a new employee\n"
+                + "Take Leave - make an employee take leave on a given day\n"
+                + "Get Leave Taken - show all leave taken by a particular employee\n"
+                + "Get Employee Vacation Time - see how much vacation an employee has left\n"
+                + "Get Employee Sick Leave Left - see how much sick leave an employee has left\n"
+                + "Add/Change notes on leave taken - Change the note on a day of leave taken by the employee\n"
+                + "Change Department - Change an employee's Department\n"
+                + "Change Supervisor - Change an employee's Supervisor\n"
+                + "End Day - Change the day to one day in the future\n"
+                + "Save - Saves the current state of the program to a file named " + JSON_STORE + "\n"
+                + "Load - Loads a state from the directory: " + JSON_STORE;
+        System.out.println(message);
+    }
+
+    private LeaveType stringToLeaveType(String potentialLeave) {
+        LeaveType l;
+        switch (potentialLeave) {
+            case "Holiday":
+                l = LeaveType.HOLIDAY;
+                break;
+
+            case "Sick":
+                l = LeaveType.SICK;
+                break;
+
+            default:
+                System.out.println("the type you entered has no match");
+                //While loop?
+                l = LeaveType.SICK;
+                break;
+        }
+        return l;
+    }
 }
