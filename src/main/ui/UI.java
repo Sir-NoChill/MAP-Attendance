@@ -7,6 +7,10 @@ import model.WorkHours;
 import model.leave.Leave;
 import model.leave.LeaveType;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.util.Scanner;
 
@@ -62,6 +66,7 @@ public class UI {
                 System.out.println("Please enter the employee role (Human Resources, Accountant, or Legal Assistant)");
                 String possibleRole = scanner.nextLine(); //TODO may need to implement a while loop in case the user
                                                           // types wrong
+                                                          // see bank teller example
                 switch (possibleRole) {
 
                     case "Human Resources":
@@ -226,6 +231,10 @@ public class UI {
 
                 return "day ended, the new date is " + this.state.getCurrentDate();
 
+            case "Save":
+
+            case "Load":
+
             case "help":
                 String message = "New Employee - create a new employee\n"
                         + "Take Leave - make an employee take leave on a given day\n"
@@ -233,9 +242,11 @@ public class UI {
                         + "Get Employee Vacation Time - see how much vacation an employee has left\n"
                         + "Get Employee Sick Leave Left - see how much sick leave an employee has left\n"
                         + "Add/Change notes on leave taken - Change the note on a day of leave taken by the employee\n"
-                        + "Change Department - Change an employee's Department"
-                        + "Change Supervisor - Change an employee's Supervisor"
-                        + "End Day - Change the day to one day in the future";
+                        + "Change Department - Change an employee's Department\n"
+                        + "Change Supervisor - Change an employee's Supervisor\n"
+                        + "End Day - Change the day to one day in the future\n"
+                        + "Save - Saves the current state of the program to a file named \'save.txt\'\n"
+                        + "Load - Loads a state from a given file directory, provided by the user";
                 System.out.println(message);
         }
 
@@ -266,8 +277,5 @@ public class UI {
         return output.toString();
     }
 
-    //EFFECTS: Entry point for console application
-    public static void main(String[] args) {
-        new UI();
-    }
+
 }

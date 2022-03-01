@@ -50,45 +50,20 @@ given about two days of google
 
 # My User Stories
 1. As a user I would like to Create an employee with a given anniversary, name and role
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
 2. As a user I would like to Make that employee take leave on a certain day
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
 3. As a user I would like to Return a list of the days when that leave was taken
-    - [x] Tested (getLeaveTaken)
-    - [x] Specified
-    - [x] Implemented
 4. As a user I would like to Track how much vacation time the employee has left
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
 5. As a user I would like to Track how much  sick leave the employee has at the moment
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
 6. As a user I would like to add notes on the leave taken
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
 7. As a user I would like to take non-integer leave days
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
 8. As a user I would like to Add a department for my employees
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
 9. As a user I would like to Add a supervisor for the employee
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
 10. Check the date and change state accordingly?
     (alt. change the date given some condition)
     (alt set date on program opening)
     This includes changing the month / year and the corresponding dependencies.
-    - [x] Tested
-    - [x] Specified
-    - [x] Implemented
+11. Accrue sick leave on a yearly or monthly basis
+12. Accrue holiday on a yearly or monthly basis
+13. Be able to save the state of the program on a given day (optionally)
+14. Be able to load the state of a program on a different day (optionally)
+15. (implied by 12.) have the program change state appropriately from initial day to current day

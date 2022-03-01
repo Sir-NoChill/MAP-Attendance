@@ -4,14 +4,20 @@ import model.leave.Holiday;
 import model.leave.Leave;
 import model.leave.LeaveType;
 import model.leave.Sick;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistance.Writable;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
+import static model.leave.LeaveType.HOLIDAY;
+
 // Represents an employee
-public class Employee {
+public class Employee implements Writable {
 
     private LocalDate anniversary;
     private Role role;
@@ -27,6 +33,7 @@ public class Employee {
     private final double sickLeaveAccrual = 6; //Sick leave accrued per month
 
     //TODO overload the constructor to accept more different date formats?
+    //TODO overload constructor to accept Strings as Roles
     public Employee(LocalDate anniversary, Role role, String name, WorkHours workHours,
                     String supervisor, String department) {
         this.anniversary = anniversary;
@@ -69,7 +76,7 @@ public class Employee {
             leave = new Sick(date, comment);
             sickLeaveLeft -= 1;
         } else {
-            leave = new Holiday(date, comment); //Should probably figure out how to throw an exception here
+            leave = new Holiday(date, comment); //FIXME Should probably figure out how to throw an exception here
             holidayLeft -= 1;
         }
         this.leaveTaken.add(leave);
@@ -170,6 +177,62 @@ public class Employee {
             }
         }
         return null;
+    }
+
+    public static Role stringToRole(String s) {
+        //FIXME do a try-catch
+        s = s.toLowerCase();
+        switch (s) {
+            case "accountant":
+                return Role.ACCOUNTANT;
+            case "human_resources":
+                return Role.HUMAN_RESOURCES;
+            case "legal_assistant":
+                return Role.LEGAL_ASSISTANT;
+        }
+        return null;
+    }
+
+    public static WorkHours stringToWorkHours(String s) {
+        //FIXME do a try-catch
+        s = s.toLowerCase();
+        switch (s) {
+            case "six_half":
+                return WorkHours.SIX_HALF;
+            case "seven":
+                return WorkHours.SEVEN;
+            case "seven_half":
+                return WorkHours.SEVEN_HALF;
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name",this.name);
+        json.put("anniversary",this.anniversary.toString());
+        json.put("supervisor",this.supervisor);
+        json.put("department",this.department);
+
+        json.put("role",role);
+        json.put("workHours",workHours);
+
+        json.put("holidayLeft",holidayLeft);
+        json.put("sickLeaveLeft",sickLeaveLeft);
+
+        json.put("leave",leaveToJsonArray());
+
+        return json;
+    }
+
+    private JSONArray leaveToJsonArray() {
+        JSONArray json = new JSONArray();
+
+        for (Leave l : this.leaveTaken) {
+            json.put(l.toJson());
+        }
+        return json;
     }
 
     public LocalDate getAnniversary() {

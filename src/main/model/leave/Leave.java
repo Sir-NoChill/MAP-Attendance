@@ -1,5 +1,7 @@
 package model.leave;
 
+import org.json.JSONObject;
+
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -12,4 +14,6 @@ public interface Leave {
     LocalDate getDateOfLeave();
 
     void setComments(String comments);
+
+    Object toJson();
 }

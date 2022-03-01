@@ -1,5 +1,8 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -84,6 +87,25 @@ public class State {
                 employee.accrueSickDays();
             }
         }
+    }
+
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("currentDate",currentDate.toString());
+        json.put("employees",employeesToJsonArray());
+
+        return json;
+    }
+
+    private JSONArray employeesToJsonArray() {
+        JSONArray json = new JSONArray();
+
+        for (Employee e : listOfEmployees) {
+            json.put(e.toJson());
+        }
+
+        return json;
     }
 
     public LocalDate getCurrentDate() {
