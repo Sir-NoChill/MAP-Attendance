@@ -248,4 +248,10 @@ public class StateTest {
         employeeState.addEmployee(testEmployee1);
         assertEquals(testEmployee1,employeeState.searchEmployees("Jerry"));
     }
+
+    @Test
+    void testSearchEmployee_NotFound() {
+        employeeState.addEmployee(testEmployee1);
+        assertNull(employeeState.searchEmployees("Harold"));
+    }
 }
