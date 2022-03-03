@@ -235,4 +235,10 @@ public class StateTest {
     void testSearchEmployee_Null() {
         assertNull(employeeState.searchEmployees("Roland Radish, Regal Rennaisance Ripley"));
     }
+
+    @Test
+    void testSearchEmployee_Found() {
+        employeeState.addEmployee(testEmployee1);
+        assertEquals(testEmployee1,employeeState.searchEmployees("Jerry"));
+    }
 }
