@@ -3,9 +3,7 @@ package model;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -112,7 +110,7 @@ public class State {
         return currentDate;
     }
 
-    public Set<Employee> getListOfEmployees() {
+    public Set<Employee> getSetOfEmployees() {
         return listOfEmployees;
     }
 

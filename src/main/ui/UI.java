@@ -232,6 +232,8 @@ public class UI {
 
                 return "";
 
+            case "Quit":
+                System.exit(0);
         }
 
         return "Operation Complete";
@@ -242,7 +244,7 @@ public class UI {
     //EFFECTS:  returns an employee from the listOfEmployees with a matching name to the input
     public Employee searchEmployee(String employeeName) {
         for (Employee employee :
-                state.getListOfEmployees()) {
+                state.getSetOfEmployees()) {
             if (employeeName.equals(employee.getName())) {
                 return employee;
             }
@@ -292,7 +294,8 @@ public class UI {
                 + "Change Supervisor - Change an employee's Supervisor\n"
                 + "End Day - Change the day to one day in the future\n"
                 + "Save - Saves the current state of the program to a file named " + JSON_STORE + "\n"
-                + "Load - Loads a state from the directory: " + JSON_STORE;
+                + "Load - Loads a state from the directory: " + JSON_STORE + "\n"
+                + "Quit - exit the program";
         System.out.println(message);
     }
 

@@ -1,0 +1,18 @@
+{
+    "currentDate": "2022-03-01",
+    "employees": [{
+        "holidayLeft": 0,
+        "role": "HUMAN_RESOURCES",
+        "leave": [{
+            "comments": "Jerry got eaten by a possum",
+            "leaveType": "Sick",
+            "leaveDate": "2018-07-13"
+        }],
+        "workHours": "SEVEN",
+        "name": "Jerry",
+        "department": "Harry Potter",
+        "anniversary": "2012-01-01",
+        "supervisor": "Mom",
+        "sickLeaveLeft": 5
+    }]
+}

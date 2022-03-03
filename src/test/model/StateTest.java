@@ -1,7 +1,5 @@
 package model;
 
-import model.Employee;
-import model.State;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,23 +52,23 @@ public class StateTest {
     @Test
     public void testStateConstructor() {
         assertEquals(LocalDate.parse("2022-02-09"),initialState.getCurrentDate());
-        assertTrue(initialState.getListOfEmployees().isEmpty());
+        assertTrue(initialState.getSetOfEmployees().isEmpty());
 
         assertEquals(LocalDate.parse("2100-01-01"),finalState.getCurrentDate());
-        assertTrue(finalState.getListOfEmployees().isEmpty());
+        assertTrue(finalState.getSetOfEmployees().isEmpty());
 
         assertEquals(LocalDate.now(),currentState.getCurrentDate());
-        assertTrue(currentState.getListOfEmployees().isEmpty());
+        assertTrue(currentState.getSetOfEmployees().isEmpty());
     }
 
     @Test
     public void testAddEmployee() {
         initialState.addEmployee(testEmployee1);
-        assertEquals(1,initialState.getListOfEmployees().size());
+        assertEquals(1,initialState.getSetOfEmployees().size());
         initialState.addEmployee(testEmployee2);
-        assertEquals(2,initialState.getListOfEmployees().size());
+        assertEquals(2,initialState.getSetOfEmployees().size());
         initialState.addEmployee(testEmployee2);
-        assertEquals(2,initialState.getListOfEmployees().size());
+        assertEquals(2,initialState.getSetOfEmployees().size());
     }
 
     @Test
@@ -87,7 +85,7 @@ public class StateTest {
         employeeState.addEmployee(easyTestEmployee3);
         employeeState.setCurrentDate(LocalDate.parse("2020-04-05"));//not an important date
         employeeState.updateEmployees();
-        for (Employee employee : employeeState.getListOfEmployees()) {
+        for (Employee employee : employeeState.getSetOfEmployees()) {
             assertEquals(0,employee.getHolidayLeft());
         }
     }
@@ -112,7 +110,7 @@ public class StateTest {
         employeeState.addEmployee(easyTestEmployee3);
         employeeState.setCurrentDate(LocalDate.parse("2019-12-31"));
         employeeState.incrementDate();
-        for (Employee employee : employeeState.getListOfEmployees()) {
+        for (Employee employee : employeeState.getSetOfEmployees()) {
             assertEquals(6,employee.getSickLeaveLeft());
         }
     }
