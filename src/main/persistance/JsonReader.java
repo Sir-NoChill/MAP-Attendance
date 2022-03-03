@@ -29,12 +29,14 @@ public class JsonReader {
         this.source = source;
     }
 
+    //EFFECTS: Reads a state from a JSON file
     public State read() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
         return parseState(jsonObject);
     }
 
+    //EFFECTS: converts a JSON file into a Java Readable String
     public String readFile(String source) throws IOException {
         StringBuilder contentBuilder = new StringBuilder();
 
@@ -45,6 +47,7 @@ public class JsonReader {
         return contentBuilder.toString();
     }
 
+    //EFFECTS: parses a JSON file into a state
     private State parseState(JSONObject jsonObject) {
         String date = jsonObject.getString("currentDate");
         State s = new State(date);
@@ -52,6 +55,7 @@ public class JsonReader {
         return s;
     }
 
+    //EFFECTS: Adds all employees from JSON Array to a state when loaded form a file
     private void addEmployees(State state, JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.getJSONArray("employees");
         for (Object json : jsonArray) {
@@ -60,6 +64,7 @@ public class JsonReader {
         }
     }
 
+    //EFFECTS: Adds an employee to a state when loaded from JSON file
     private void addEmployee(State state, JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         String supervisor = jsonObject.getString("supervisor");
@@ -84,6 +89,7 @@ public class JsonReader {
         state.addEmployee(e);
     }
 
+    //EFFECTS: adds all the leave from a JSON Array to an employee when loading a file
     private void addLeaves(Employee employee, JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.getJSONArray("leave");
         for (Object json : jsonArray) {
@@ -92,6 +98,7 @@ public class JsonReader {
         }
     }
 
+    //EFFECTS: adds leave to an employee from the read file
     private void addLeave(Employee employee, JSONObject jsonObject) {
         String date = jsonObject.getString("leaveDate");
         String comments = jsonObject.getString("comments");

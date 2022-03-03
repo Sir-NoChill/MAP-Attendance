@@ -263,6 +263,7 @@ public class UI {
         return output.toString();
     }
 
+    //EFFECTS: saves a program state to a file
     private void saveProgramState() {
         try {
             jsonWriter.open();
@@ -274,6 +275,7 @@ public class UI {
         }
     }
 
+    //EFFECTS: attempts to read a program state from file
     private void loadProgramState() {
         try {
             state = jsonReader.read();
@@ -283,6 +285,7 @@ public class UI {
         }
     }
 
+    //EFFECTS: terminal output of a help message
     private void help() {
         String message = "New Employee - create a new employee\n"
                 + "Take Leave - make an employee take leave on a given day\n"
@@ -299,7 +302,10 @@ public class UI {
         System.out.println(message);
     }
 
+
+    //Effects: converts a string of characters to a leaveType
     private LeaveType stringToLeaveType(String potentialLeave) {
+        //TODO wrap in try catch
         LeaveType l;
         switch (potentialLeave) {
             case "Holiday":

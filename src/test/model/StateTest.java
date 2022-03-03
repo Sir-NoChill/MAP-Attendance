@@ -224,6 +224,13 @@ public class StateTest {
         assertEquals(0,testEmployee1.getHolidayLeft());
     }
 
+    @Test
+    void testUpdateDate() {
+        employeeState.addEmployee(testEmployee1);
+        employeeState.update(LocalDate.parse("2022-03-03"));
+        assertEquals(LocalDate.parse("2022-03-03"),employeeState.getCurrentDate());
+        assertEquals(19,testEmployee1.getYearsOfService());
+    }
 
     @Test
     public void testIncrementDate() {

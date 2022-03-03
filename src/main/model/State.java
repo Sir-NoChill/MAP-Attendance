@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,25 +58,26 @@ public class State {
         return null;
     }
 
-    /**REQUIRES: initial state exist
-    *          and be distinct from attempted update
-    *          (//FIXME) and in the future (to change)
-    *MODIFIES: this
-    *EFFECTS: changes the current date of the state
-    *         updates employees holiday
-    *         updates employee sick
-    *TODO allow updates of greater time spans in preparation for a filesave system
-    *TODO create some way of returning to a previous state
-    *FIXME LocalDate is immutable, we need to find an alternative to implement
-    *public void update(LocalDate newDate) {
-    *    long daysBetween = ChronoUnit.DAYS.between(this.currentDate,newDate);
-    *    int intDaysBetween = Math.toIntExact(daysBetween);
-    *    for (int n = 0; n < intDaysBetween; n++) {
-    *        updateEmployees();
-    *    }
-    *    this.currentDate = newDate;
-    *}
-    */
+    //REQUIRES: initial state exist
+    //          and be distinct from attempted update
+    //          (//FIXME) and in the future (to change)
+    //MODIFIES: this
+    //EFFECTS: changes the current date of the state
+    //         updates employees holiday
+    //         updates employee sick
+    //TODO Find a way to restore a previous state
+    //TODO Implement in the save system
+    public void update(LocalDate newDate) {
+        long daysBetween = ChronoUnit.DAYS.between(this.currentDate,newDate);
+        int intDaysBetween = Math.toIntExact(daysBetween);
+        for (int n = 0; n < intDaysBetween; n++) {
+            incrementDate();
+        }
+        this.currentDate = newDate;
+    }
+
+    // MODIFIES: this
+    // EFFECTS:  Increments the day by 1
     public void incrementDate() {
         LocalDate date = currentDate.plusDays(1); //This needs to be awkward since the LocalDate is immutable
         this.currentDate = date;
@@ -98,6 +100,7 @@ public class State {
         }
     }
 
+    // EFFECTS: converts a state to a JSON object
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
 
@@ -107,6 +110,7 @@ public class State {
         return json;
     }
 
+    // EFFECTS: converts all the employees in a state into a JSON Array
     private JSONArray employeesToJsonArray() {
         JSONArray json = new JSONArray();
 
