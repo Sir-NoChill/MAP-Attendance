@@ -185,12 +185,14 @@ public class Employee implements Writable {
         switch (s) {
             case "accountant":
                 return Role.ACCOUNTANT;
+            case "hr":
             case "human_resources":
                 return Role.HUMAN_RESOURCES;
             case "legal_assistant":
                 return Role.LEGAL_ASSISTANT;
+            default:
+                return null;
         }
-        return null;
     }
 
     public static WorkHours stringToWorkHours(String s) {
@@ -198,13 +200,17 @@ public class Employee implements Writable {
         s = s.toLowerCase();
         switch (s) {
             case "six_half":
+            case "6.5":
                 return WorkHours.SIX_HALF;
             case "seven":
+            case "7":
                 return WorkHours.SEVEN;
             case "seven_half":
+            case "7.5":
                 return WorkHours.SEVEN_HALF;
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
@@ -214,21 +220,16 @@ public class Employee implements Writable {
         json.put("anniversary",this.anniversary.toString());
         json.put("supervisor",this.supervisor);
         json.put("department",this.department);
-
         json.put("role",role);
         json.put("workHours",workHours);
-
         json.put("holidayLeft",holidayLeft);
         json.put("sickLeaveLeft",sickLeaveLeft);
-
         json.put("leave",leaveToJsonArray());
-
         return json;
     }
 
     private JSONArray leaveToJsonArray() {
         JSONArray json = new JSONArray();
-
         for (Leave l : this.leaveTaken) {
             json.put(l.toJson());
         }

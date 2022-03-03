@@ -1,7 +1,6 @@
 package model;
 
 import model.leave.*;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +48,7 @@ public class LeaveTest {
     }
 
     @Test
-    public void testSetDateOfLEave() {
+    public void testSetDateOfLeave() {
         sick1.setDateOfLeave(LocalDate.parse("2022-04-01"));
         assertEquals(LocalDate.parse("2022-04-01"),sick1.getDateOfLeave());
 

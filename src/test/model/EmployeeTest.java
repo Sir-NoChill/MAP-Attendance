@@ -4,6 +4,9 @@ import model.Employee;
 import model.leave.Leave;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static model.Employee.stringToRole;
+import static model.Employee.stringToWorkHours;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -286,5 +289,49 @@ class EmployeeTest {
     public void testSearchLeaveCase2() {
         Leave searchResult = testEmployee2.searchLeave("2020-07-08");
         assertNull(searchResult);
+    }
+
+    @Test
+    void testStringToRole_Accountant() {
+        assertEquals(ACCOUNTANT,stringToRole("accountant"));
+    }
+
+    @Test
+    void testStringToRole_HR() {
+        assertEquals(HUMAN_RESOURCES,stringToRole("human_resources"));
+        assertEquals(HUMAN_RESOURCES,stringToRole("hr"));
+    }
+
+    @Test
+    void testStringToRole_LegalAssistant() {
+        assertEquals(LEGAL_ASSISTANT,stringToRole("legal_assistant"));
+    }
+
+    @Test
+    void testStringToRole_null() {
+        assertNull(stringToRole("silly goose"));
+    }
+
+    @Test
+    void testStringToWorkHours_SIX_HALF() {
+        assertEquals(SIX_HALF,stringToWorkHours("six_half"));
+        assertEquals(SIX_HALF,stringToWorkHours("6.5"));
+    }
+
+    @Test
+    void testStringToWorkHours_SEVEN() {
+        assertEquals(SEVEN,stringToWorkHours("seven"));
+        assertEquals(SEVEN,stringToWorkHours("7"));
+    }
+
+    @Test
+    void testStringToWorkHours_SEVEN_HALF() {
+        assertEquals(SEVEN_HALF,stringToWorkHours("seven_half"));
+        assertEquals(SEVEN_HALF,stringToWorkHours("7.5"));
+    }
+
+    @Test
+    void testStringToWorkHours_Null() {
+        assertNull(stringToWorkHours("eeee"));
     }
 }

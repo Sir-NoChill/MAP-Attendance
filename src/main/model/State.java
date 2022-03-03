@@ -1,5 +1,6 @@
 package model;
 
+import model.leave.Leave;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -44,6 +45,16 @@ public class State {
         }
 
         return names.toString();
+    }
+
+    //EFFECTS:  Returns an instance of Employee with matching date.
+    public Employee searchEmployees(String name) {
+        for (Employee e: this.listOfEmployees) {
+            if (e.getName().equals(name)) {
+                return e;
+            }
+        }
+        return null;
     }
 
     /**REQUIRES: initial state exist

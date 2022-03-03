@@ -72,10 +72,11 @@ public class StateTest {
     }
 
     @Test
-    public void testDisplayEmployee() { //FIXME
+    public void testDisplayEmployee() {
         initialState.addEmployee(testEmployee2);
         initialState.addEmployee(testEmployee1);
-        assertEquals("Jerry, Harold, ",initialState.displayEmployees()); //FIXME should make this prettier
+        assertTrue(initialState.displayEmployees().contains("Jerry"));
+        assertTrue(initialState.displayEmployees().contains("Harold"));
     }
 
     @Test
@@ -228,5 +229,10 @@ public class StateTest {
     public void testIncrementDate() {
         employeeState.incrementDate();
         assertEquals(LocalDate.parse("2010-01-02"),employeeState.getCurrentDate());
+    }
+
+    @Test
+    void testSearchEmployee_Null() {
+        assertNull(employeeState.searchEmployees("Roland Radish, Regal Rennaisance Ripley"));
     }
 }
