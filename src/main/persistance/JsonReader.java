@@ -7,17 +7,15 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import exceptions.FileLoadError;
+import exceptions.RoleNotFoundException;
+import exceptions.WorkHoursNotFoundException;
 import model.Employee;
 import model.Role;
 import model.State;
 import model.WorkHours;
-import model.leave.Holiday;
-import model.leave.Leave;
 import model.leave.LeaveType;
-import model.leave.Sick;
 import org.json.*;
-
-import static model.Role.ACCOUNTANT;
 
 // Modeled after JsonSerializationDemo CPSC 210 2022W
 // Represents a reader that reads workroom from JSON data stored in file
@@ -79,8 +77,14 @@ public class JsonReader {
 
         double sickLeaveLeft = jsonObject.getDouble("sickLeaveLeft");
 
-        Role role1 = Employee.stringToRole(role.toLowerCase());
-        WorkHours workHours1 = Employee.stringToWorkHours(workHours.toLowerCase());
+        Role role1;
+        WorkHours workHours1;
+        try {
+            role1 = Employee.stringToRole(role.toLowerCase());
+            workHours1 = Employee.stringToWorkHours(workHours.toLowerCase());
+        } catch (RoleNotFoundException | WorkHoursNotFoundException e) {
+            throw new FileLoadError();
+        }
 
         Employee e = new Employee(anniversary, role1, name, workHours1, supervisor, department);
         e.setHolidayLeft(holidayLeft);
@@ -104,9 +108,10 @@ public class JsonReader {
         String comments = jsonObject.getString("comments");
 
         if (Objects.equals(jsonObject.getString("leaveType"), "Sick")) {
-            employee.takeLeave(date, LeaveType.SICK,comments);
+            employee.addLeaveToEmployee(date, LeaveType.SICK,comments);
         } else {
-            employee.takeLeave(date, LeaveType.HOLIDAY,comments);//TODO make sure to add these into the toJson in leave
+            employee.addLeaveToEmployee(date, LeaveType.HOLIDAY,comments);
+            //TODO make sure to add these into the toJson in leave
         }
 
     }

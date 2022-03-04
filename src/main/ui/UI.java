@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.*;
 import model.Employee;
 import model.Role;
 import model.State;
@@ -11,7 +12,11 @@ import persistance.JsonWriter;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Scanner;
+
+import static model.Employee.stringToRole;
+import static model.Employee.stringToWorkHours;
 
 // Initial point of entry for the program
 public class UI {
@@ -68,46 +73,27 @@ public class UI {
                 anniversary = scanner.nextLine();
 
                 System.out.println("Please enter the employee role (Human Resources, Accountant, or Legal Assistant)");
-                String possibleRole = scanner.nextLine(); //TODO may need to implement a while loop in case the user
-                                                          // types wrong
-                                                          // see bank teller example
-                switch (possibleRole) {
-
-                    case "Human Resources":
-                        role = Role.HUMAN_RESOURCES;
-                        break;
-
-                    case "Accountant":
-                        role = Role.ACCOUNTANT;
-                        break;
-
-                    default:
-                        role = Role.LEGAL_ASSISTANT;
-                        break;
+                String possibleRole = scanner.nextLine();
+                try {
+                    role = stringToRole(possibleRole);
+                } catch (RoleNotFoundException e) {
+                    System.out.println("Invalid role, we will set it to Legal assistant for now, "
+                            + "you can change this later");
+                    role = Role.LEGAL_ASSISTANT;
                 }
 
                 System.out.println("Please enter the employee name");
                 name = scanner.nextLine();
 
-                System.out.println("Please enter the number of hours the employee works per day (in a number, ex '7')");
+                System.out.println("Please enter the number of hours the employee works per "
+                        + "day (in a number, ex '7.5' or '7')");
                 String workHoursPossible = scanner.nextLine();
-                switch (workHoursPossible) {
-
-                    case "7.5":
-                        workHours = WorkHours.SEVEN_HALF;
-                        break;
-
-                    case "6.5":
-                        workHours = WorkHours.SIX_HALF;
-                        break;
-
-                    case "7":
-                        workHours = WorkHours.SEVEN;
-                        break;
-
-                    default:
-                        workHours = WorkHours.SEVEN;
-                        break;
+                try {
+                    workHours = stringToWorkHours(workHoursPossible);
+                } catch (WorkHoursNotFoundException e) {
+                    System.out.println("We did not understand that value, we will set it to 7, "
+                            + "you can change this later");
+                    workHours = WorkHours.SEVEN;
                 }
 
                 System.out.println("Please enter the employee's Supervisor");
@@ -125,12 +111,22 @@ public class UI {
                 String date = null;
                 String potentialLeave;
                 String comment;
-                LeaveType leaveType;
+                LeaveType leaveType = null;
 
                 System.out.println("Please input the type of leave (Holiday or Sick)");
                 potentialLeave = scanner.nextLine();
 
-                leaveType = stringToLeaveType(potentialLeave);
+                try {
+                    leaveType = stringToLeaveType(potentialLeave);
+                } catch (InvalidLeaveTypeException e) {
+                    System.out.println("That type is invalid, would you like to try again? Y/N");
+                    String again = scanner.nextLine().toLowerCase(Locale.ROOT);
+                    if (again.equals("y")) {
+                        processOperation("Take Leave");
+                    } else {
+                        processOperations();
+                    }
+                }
 
                 System.out.println("Please enter the date of leave ('yyyy-mm-dd')");
                 date = scanner.nextLine();
@@ -140,7 +136,17 @@ public class UI {
 
                 System.out.println("please enter the employee name");
                 String employeeName = scanner.nextLine();
-                searchEmployee(employeeName).takeLeave(date,leaveType,comment);
+                try {
+                    searchEmployee(employeeName).takeLeave(date,leaveType,comment);
+                } catch (InvalidLeaveAmountException e) {
+                    System.out.println("The employee does not have enough leave left to take more, override? Y/N");
+                    String override = scanner.nextLine().toLowerCase(Locale.ROOT);
+                    if (override.equals("y")) {
+                        searchEmployee(employeeName).addLeaveToEmployee(date,leaveType,comment);
+                    } else {
+                        processOperations();
+                    }
+                }
 
                 return employeeName + " took leave on " + date + ", comments:" + comment;
 
@@ -176,11 +182,21 @@ public class UI {
 
                 System.out.println("Please insert the date the leave was taken");
                 date4 = scanner.nextLine();
-                Leave leave4 = employee1.searchLeave(date4);
+                Leave leave4 = null;
+                try {
+                    leave4 = employee1.searchLeave(date4);
+                } catch (LeaveNotFoundException e) {
+                    System.out.println("We cannot find that leave");
+                    processOperations();
+                }
 
                 System.out.println("Please enter the revised comments you would like");
                 comment4 = scanner.nextLine();
-                leave4.setComments(comment4);
+                try {
+                    leave4.setComments(comment4);
+                } catch (NullPointerException e) {
+                    leave4.setComments("");
+                }
 
                 return "comments changed";
 
@@ -304,8 +320,7 @@ public class UI {
 
 
     //Effects: converts a string of characters to a leaveType
-    private LeaveType stringToLeaveType(String potentialLeave) {
-        //TODO wrap in try catch
+    private LeaveType stringToLeaveType(String potentialLeave) throws InvalidLeaveTypeException {
         LeaveType l;
         switch (potentialLeave) {
             case "Holiday":
@@ -317,10 +332,7 @@ public class UI {
                 break;
 
             default:
-                System.out.println("the type you entered has no match");
-                //While loop?
-                l = LeaveType.SICK;
-                break;
+                throw new InvalidLeaveTypeException();
         }
         return l;
     }

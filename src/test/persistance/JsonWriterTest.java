@@ -52,9 +52,11 @@ public class JsonWriterTest extends JsonTest {
         Employee employee = new Employee(LocalDate.parse("2012-01-01"),
                 Role.HUMAN_RESOURCES,"Jerry", WorkHours.SEVEN,"Mom",
                 "Harry Potter");
-        employee.takeLeave("2021-03-04", LeaveType.SICK,"Hit by a bus");
+        employee.setHolidayLeft(50);
+        employee.setSickLeaveLeft(50);
+        employee.addLeaveToEmployee("2021-03-04", LeaveType.SICK,"Hit by a bus");
         s.addEmployee(employee);
-        employee.takeLeave("2020-01-04",LeaveType.HOLIDAY,"Wedding");
+        employee.addLeaveToEmployee("2020-01-04",LeaveType.HOLIDAY,"Wedding");
 
         try {
             writer.open();

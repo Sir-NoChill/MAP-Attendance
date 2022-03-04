@@ -1,5 +1,9 @@
 package model;
 
+import exceptions.InvalidLeaveAmountException;
+import exceptions.LeaveNotFoundException;
+import exceptions.RoleNotFoundException;
+import exceptions.WorkHoursNotFoundException;
 import model.leave.Holiday;
 import model.leave.Leave;
 import model.leave.LeaveType;
@@ -11,10 +15,7 @@ import persistance.Writable;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
-
-import static model.leave.LeaveType.HOLIDAY;
 
 // Represents an employee
 public class Employee implements Writable {
@@ -70,14 +71,43 @@ public class Employee implements Writable {
     //EFFECTS: creates an instance of Leave with appropriate information
     //         appends an instance of Leave to leaveTaken
     //         reduces the appropriate type of leave left to the employee
-    public void takeLeave(LocalDate date, LeaveType leaveType, String comment) {
+    public void takeLeave(LocalDate date, LeaveType leaveType, String comment) throws InvalidLeaveAmountException {
+        //FIXME add exception throws
         Leave leave;
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date, comment);
             sickLeaveLeft -= 1;
+            if (sickLeaveLeft < 0) {
+                throw new InvalidLeaveAmountException();
+            }
         } else {
-            leave = new Holiday(date, comment); //FIXME Should probably figure out how to throw an exception here
+            leave = new Holiday(date, comment);
             holidayLeft -= 1;
+            if (holidayLeft < 0) {
+                throw new InvalidLeaveAmountException();
+            }
+        }
+        this.leaveTaken.add(leave);
+    }
+
+    //REQUIRES:
+    //MODIFIES: this
+    //EFFECTS:  appends an instance of Leave to leaveTaken
+    public void takeLeave(String date, LeaveType leaveType, String comment) throws InvalidLeaveAmountException {
+        Leave leave;
+        LocalDate date1 = LocalDate.parse(date);
+        if (leaveType == LeaveType.SICK) {
+            leave = new Sick(date1, comment);
+            sickLeaveLeft -= 1;
+            if (sickLeaveLeft < 0) {
+                throw new InvalidLeaveAmountException();
+            }
+        } else {
+            leave = new Holiday(date1, comment); //Should probably figure out how to throw an exception here
+            holidayLeft -= 1;
+            if (holidayLeft < 0) {
+                throw new InvalidLeaveAmountException();
+            }
         }
         this.leaveTaken.add(leave);
     }
@@ -86,7 +116,8 @@ public class Employee implements Writable {
     //REQUIRES:
     //MODIFIES: this
     //EFFECTS:  appends an instance of Leave to leaveTaken
-    public void takeLeave(String date, LeaveType leaveType, String comment) {
+    //          this is to be used for the JSON Parsing so that it does not need to throw an error.
+    public void addLeaveToEmployee(String date, LeaveType leaveType, String comment) {
         Leave leave;
         LocalDate date1 = LocalDate.parse(date);
         if (leaveType == LeaveType.SICK) {
@@ -169,7 +200,7 @@ public class Employee implements Writable {
     //}
 
     //EFFECTS:  Returns an instance of leave with matching date.
-    public Leave searchLeave(String date) {
+    public Leave searchLeave(String date) throws LeaveNotFoundException {
         LocalDate realDate = LocalDate.parse(date);
         for (Leave leave: this.leaveTaken) {
             if (leave.getDateOfLeave().equals(realDate)) {
@@ -179,7 +210,7 @@ public class Employee implements Writable {
         return null;
     }
 
-    public static Role stringToRole(String s) {
+    public static Role stringToRole(String s) throws RoleNotFoundException {
         //FIXME do a try-catch
         s = s.toLowerCase();
         switch (s) {
@@ -187,15 +218,17 @@ public class Employee implements Writable {
                 return Role.ACCOUNTANT;
             case "hr":
             case "human_resources":
+            case "human resources":
                 return Role.HUMAN_RESOURCES;
             case "legal_assistant":
+            case "legal assistant":
                 return Role.LEGAL_ASSISTANT;
             default:
-                return null;
+                throw new RoleNotFoundException();
         }
     }
 
-    public static WorkHours stringToWorkHours(String s) {
+    public static WorkHours stringToWorkHours(String s) throws WorkHoursNotFoundException {
         //FIXME do a try-catch
         s = s.toLowerCase();
         switch (s) {
@@ -209,7 +242,7 @@ public class Employee implements Writable {
             case "7.5":
                 return WorkHours.SEVEN_HALF;
             default:
-                return null;
+                throw new WorkHoursNotFoundException();
         }
     }
 

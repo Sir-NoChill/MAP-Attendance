@@ -44,6 +44,7 @@ Custom leaves can be specified, details to come (in development).
 
 Currently, the UI is a simple console UI. Further, the UI does not respond well to user typos, which will (possibly) be
 updated in the near future.
+- in progress of creating a system of try-catch methods to catch user error and invalid inputs
 
 That is to say, I don't know where to start, but I'm sure I'll figure it out
 given about two days of google
@@ -67,3 +68,4 @@ given about two days of google
 13. Be able to save the state of the program on a given day (optionally)
 14. Be able to load the state of a program on a different day (optionally)
 15. (implied by 12.) have the program change state appropriately from initial day to current day
+    - [ ] in progress
