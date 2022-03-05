@@ -194,11 +194,6 @@ public class Employee implements Writable {
 
     //TODO create method display leave for employee
 
-
-    // public double getSickLeaveAccrual() { //Removed,as sick leave accrual is a constant
-    //     return sickLeaveAccrual;
-    //}
-
     //EFFECTS:  Returns an instance of leave with matching date.
     public Leave searchLeave(String date) throws LeaveNotFoundException {
         LocalDate realDate = LocalDate.parse(date);

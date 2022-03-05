@@ -10,7 +10,8 @@ import model.leave.LeaveType;
 import persistance.JsonReader;
 import persistance.JsonWriter;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Scanner;
@@ -18,16 +19,14 @@ import java.util.Scanner;
 import static model.Employee.stringToRole;
 import static model.Employee.stringToWorkHours;
 
-// Initial point of entry for the program
 public class UI {
-    private final Scanner scanner;
+    private Scanner scanner;
     private static final String JSON_STORE = "./data/programState.json";
     private State state;
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
 
     public UI() throws FileNotFoundException {
-        this.scanner = new Scanner(System.in);
         this.state = new State(LocalDate.now());
         this.jsonReader = new JsonReader(JSON_STORE);
         this.jsonWriter = new JsonWriter(JSON_STORE);
@@ -39,18 +38,19 @@ public class UI {
     //EFFECTS:  Entry point for user input in the console
     private void processOperations() {
         String operation;
+        scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("Please type an operation or 'help' for a list of operations");
             operation = scanner.nextLine();
             System.out.println("You typed " + operation);
+            processOperation(operation);
 
-            if (operation.equals("quit")) {
+            if (operation.toLowerCase(Locale.ROOT).equals("quit")) {
                 break;
             }
 
-            String output = processOperation(operation);
-            System.out.println(output);
+            System.out.println("Operation Complete");
         }
     }
 
@@ -58,214 +58,346 @@ public class UI {
     //MODIFIES: this
     //EFFECTS:  Runs one of the defined operations using user input from console
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
-    private String processOperation(String operation) {
+    private void processOperation(String operation) {
+        operation = operation.toLowerCase(Locale.ROOT);
         switch (operation) {
-
-            case "New Employee":
-                String anniversary;
-                Role role;
-                String name;
-                WorkHours workHours;
-                String supervisor;
-                String department;
-
-                System.out.println("Please enter the employee Anniversary (yyyy-mm-dd)");
-                anniversary = scanner.nextLine();
-
-                System.out.println("Please enter the employee role (Human Resources, Accountant, or Legal Assistant)");
-                String possibleRole = scanner.nextLine();
-                try {
-                    role = stringToRole(possibleRole);
-                } catch (RoleNotFoundException e) {
-                    System.out.println("Invalid role, we will set it to Legal assistant for now, "
-                            + "you can change this later");
-                    role = Role.LEGAL_ASSISTANT;
-                }
-
-                System.out.println("Please enter the employee name");
-                name = scanner.nextLine();
-
-                System.out.println("Please enter the number of hours the employee works per "
-                        + "day (in a number, ex '7.5' or '7')");
-                String workHoursPossible = scanner.nextLine();
-                try {
-                    workHours = stringToWorkHours(workHoursPossible);
-                } catch (WorkHoursNotFoundException e) {
-                    System.out.println("We did not understand that value, we will set it to 7, "
-                            + "you can change this later");
-                    workHours = WorkHours.SEVEN;
-                }
-
-                System.out.println("Please enter the employee's Supervisor");
-                supervisor = scanner.nextLine();
-
-                System.out.println("Please enter the employee's Department");
-                department = scanner.nextLine();
-
-                Employee employee = new Employee(anniversary,role,name,workHours,supervisor,department);
-                state.addEmployee(employee);
-
-                return "Created a new employee";
-
-            case "Take Leave":
-                String date = null;
-                String potentialLeave;
-                String comment;
-                LeaveType leaveType = null;
-
-                System.out.println("Please input the type of leave (Holiday or Sick)");
-                potentialLeave = scanner.nextLine();
-
-                try {
-                    leaveType = stringToLeaveType(potentialLeave);
-                } catch (InvalidLeaveTypeException e) {
-                    System.out.println("That type is invalid, would you like to try again? Y/N");
-                    String again = scanner.nextLine().toLowerCase(Locale.ROOT);
-                    if (again.equals("y")) {
-                        processOperation("Take Leave");
-                    } else {
-                        processOperations();
-                    }
-                }
-
-                System.out.println("Please enter the date of leave ('yyyy-mm-dd')");
-                date = scanner.nextLine();
-
-                System.out.println("Please enter any comments");
-                comment = scanner.nextLine();
-
-                System.out.println("please enter the employee name");
-                String employeeName = scanner.nextLine();
-                try {
-                    searchEmployee(employeeName).takeLeave(date,leaveType,comment);
-                } catch (InvalidLeaveAmountException e) {
-                    System.out.println("The employee does not have enough leave left to take more, override? Y/N");
-                    String override = scanner.nextLine().toLowerCase(Locale.ROOT);
-                    if (override.equals("y")) {
-                        searchEmployee(employeeName).addLeaveToEmployee(date,leaveType,comment);
-                    } else {
-                        processOperations();
-                    }
-                }
-
-                return employeeName + " took leave on " + date + ", comments:" + comment;
-
-            case "Get Leave Taken":
-                System.out.println("please enter the employee name who's leave you want to see");
-                String name1 = scanner.nextLine();
-                System.out.println(displayLeave(searchEmployee(name1)));
-
-                return "Leave Taken";
-
-            case "Get Employee Vacation Time":
-                System.out.println("please enter the employee name who's remaining leave you want to see");
-                String name2 = scanner.nextLine();
-                System.out.println(searchEmployee(name2).getHolidayLeft());
-
-                return "Vacation time";
-
-            case "Get Employee Sick Leave Left":
-                System.out.println("please enter the employee name who's remaining leave you want to see");
-                String name3 = scanner.nextLine();
-                System.out.println(searchEmployee(name3).getSickLeaveLeft());
-
-                return "Sick leave left";
-
-            case "Add/Change notes on leave taken":
-                String name4;
-                String date4 = null;
-                String comment4;
-
-                System.out.println("Please insert the name of the employee");
-                name4 = scanner.nextLine();
-                Employee employee1 = searchEmployee(name4);
-
-                System.out.println("Please insert the date the leave was taken");
-                date4 = scanner.nextLine();
-                Leave leave4 = null;
-                try {
-                    leave4 = employee1.searchLeave(date4);
-                } catch (LeaveNotFoundException e) {
-                    System.out.println("We cannot find that leave");
-                    processOperations();
-                }
-
-                System.out.println("Please enter the revised comments you would like");
-                comment4 = scanner.nextLine();
-                try {
-                    leave4.setComments(comment4);
-                } catch (NullPointerException e) {
-                    leave4.setComments("");
-                }
-
-                return "comments changed";
-
-            case "Change Department":
-                String name5;
-                String department5;
-
-                System.out.println("Please insert the name of the employee");
-                name5 = scanner.nextLine();
-                Employee employee5 = searchEmployee(name5);
-
-                System.out.println("please enter the new department name you would like for the employee");
-                department5 = scanner.nextLine();
-                employee5.setDepartment(department5);
-
-                return "department updated";
-
-            case "Change Supervisor":
-                String name6;
-                String supervisor6;
-
-                System.out.println("Please insert the name of the employee");
-                name6 = scanner.nextLine();
-                Employee employee6 = searchEmployee(name6);
-
-                System.out.println("please enter the new supervisor name you would like for the employee");
-                supervisor6 = scanner.nextLine();
-                employee6.setSupervisor(supervisor6);
-
-                return "supervisor updated";
-
-            case "End Day":
+            case "new employee":
+                createNewEmployeeUI();
+                break;
+            case "take sick leave":
+                employeeTakeSickUI();
+                break;
+            case "take holiday":
+                employeeTakeHolidayUI();
+                break;
+            case "get leave taken":
+                displayLeaveUI();
+                break;
+            case "get employee vacation time":
+                checkEmployeeHolidayLeave();
+                break;
+            case "get employee sick leave left":
+                checkEmployeeSickLeave();
+                break;
+            case "add/change notes on leave taken":
+                changeNotesOnLeave();
+                break;
+            case "change department":
+                changeDepartment();
+                break;
+            case "change supervisor":
+                changeSupervisor();
+                break;
+            case "end day":
                 this.state.incrementDate();
-
-                return "day ended, the new date is " + this.state.getCurrentDate();
-
-            case "Save":
+                break;
+            case "save":
                 saveProgramState();
-
-                return "";
-
-            case "Load":
-                loadProgramState();
-
-                return "";
-
+                break;
             case "help":
                 help();
-
-                return "";
-
-            case "Quit":
-                System.exit(0);
+                break;
+            case "load":
+                loadProgramState();
+                break;
+            case "change employee role":
+                changeRoleUI(); //TODO
+                break;
+            case "change employee work hours":
+                //changeWorkHoursUI(); //TODO
+                break;
+            case "display employees":
+                //displayEmployeesUI(); //TODO
+                break;
+            case "display employee leave":
+                //displayEmployeeLeaveUI(); //TODO
+                break;
+            case "show current date":
+                //showCurrentDateUI(); //TODO
+                break;
         }
-
-        return "Operation Complete";
     }
 
-    //REQUIRES: State.listOfEmployees be non-empty
-    //MODIFIES:
-    //EFFECTS:  returns an employee from the listOfEmployees with a matching name to the input
-    public Employee searchEmployee(String employeeName) {
-        for (Employee employee :
-                state.getSetOfEmployees()) {
-            if (employeeName.equals(employee.getName())) {
-                return employee;
+    private void changeRoleUI() {
+        Employee e;
+        boolean bool = true;
+        while (bool) {
+            try {
+                System.out.println("Please type the name of the employee who's role you would like to change");
+                e = state.searchEmployees(scanner.nextLine());
+
+                System.out.println("Please type their new role (hr, accountant, legal assistant)");
+                Role role = stringToRole(scanner.nextLine());
+                e.setRole(role);
+                bool = false;
+            } catch (EmployeeNotFoundException ex) {
+                System.out.println("We couldn't find that employee, care to try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            } catch (RoleNotFoundException ex) {
+                System.out.println("That role type doesn't exist, care to try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
             }
         }
-        return null;
+    }
+
+    //MODIFIES: this
+    //EFFECTS: creates a new employee with user input
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
+    private void createNewEmployeeUI() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+        Role role = null;
+        WorkHours workHours = null;
+
+        while (bool) {
+            System.out.println("Please type the following followed by a newline: anniversary (yyyy-mm-dd),"
+                    + "role (HR, Accountant, Legal Assistant), name, number of hours worked per day"
+                    + "(6.5,7,7.5), supervisor and department. If something does not work we will tell you.");
+            String anniversary = scanner.nextLine();
+            try {
+                role = stringToRole(scanner.nextLine());
+            } catch (RoleNotFoundException e) {
+                System.out.println("We did not get that role, try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            }
+            String name = scanner.nextLine();
+            try {
+                workHours = stringToWorkHours(scanner.nextLine());
+            } catch (WorkHoursNotFoundException e) {
+                System.out.println("We weren't able to parse that, try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            }
+
+            String supervisor = scanner.nextLine();
+            String department = scanner.nextLine();
+
+            Employee employee = new Employee(anniversary,role,name,workHours,supervisor,department);
+            state.addEmployee(employee);
+            System.out.println("Finished");
+            bool = false;
+        }
+    }
+
+    //MODIFIES: this
+    //EFFECTS: adds an instance of Sick to Employee in State
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
+    private void employeeTakeSickUI() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+        Employee employee = null;
+        String date = null;
+        String comments = null;
+
+        while (bool) {
+            try {
+                System.out.println("Please type the name of the employee who will take leave");
+                employee = state.searchEmployees(scanner.nextLine());
+
+                System.out.println("Please type the date the leave will be taken (yyyy-mm-dd)");
+                date = scanner.nextLine();
+
+                System.out.println("Please type any comments:");
+                comments = scanner.nextLine();
+
+                employee.takeLeave(date, LeaveType.SICK,comments);
+                bool = false;
+            } catch (EmployeeNotFoundException e) {
+                System.out.println("We couldn't find that employee, try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            } catch (InvalidLeaveAmountException e) {
+                System.out.println("The employee has no more leave of that type left, override? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("y")) {
+                    employee.addLeaveToEmployee(date, LeaveType.SICK, comments);
+                }
+            }
+        }
+    }
+
+
+    //MODIFIES: this
+    //EFFECTS: adds an instance of Holiday to Employee in State
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
+    private void employeeTakeHolidayUI() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+        Employee employee = null;
+        String date = null;
+        String comments = null;
+
+        while (bool) {
+            try {
+                System.out.println("Please type the name of the employee who will take leave");
+                employee = state.searchEmployees(scanner.nextLine());
+
+                System.out.println("Please type the date the leave will be taken (yyyy-mm-dd)");
+                date = scanner.nextLine();
+
+                System.out.println("Please type any comments:");
+                comments = scanner.nextLine();
+
+                employee.takeLeave(date, LeaveType.HOLIDAY,comments);
+                bool = false;
+            } catch (EmployeeNotFoundException e) {
+                System.out.println("We couldn't find that employee, try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            } catch (InvalidLeaveAmountException e) {
+                System.out.println("The employee has no more leave of that type left, override? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("y")) {
+                    employee.addLeaveToEmployee(date, LeaveType.HOLIDAY, comments);
+                }
+            }
+        }
+    }
+
+    //EFFECTS: displays the employee's leave taken
+    private void displayLeaveUI() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+
+        while (bool) {
+            try {
+                System.out.println("Please type the name of the employee who's leave you would like to see");
+                Employee e = state.searchEmployees(scanner.nextLine());
+                System.out.println(displayLeave(e));
+                bool = false;
+            } catch (EmployeeNotFoundException e) {
+                System.out.println("We couldn't find that employee, try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            }
+        }
+    }
+
+    //EFFECTS: returns the employee holiday leave remaining
+    private void checkEmployeeHolidayLeave() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+
+        while (bool) {
+            try {
+                System.out.println("Please type the name of the employee who's leave you would like to get");
+                Employee e = state.searchEmployees(scanner.nextLine());
+                System.out.println(e.getHolidayLeft());
+                bool = false;
+            } catch (EmployeeNotFoundException e) {
+                System.out.println("We couldn't find that employee, try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            }
+        }
+    }
+
+    //EFFECTS: returns the employee sick leave remaining
+    private void checkEmployeeSickLeave() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+
+        while (bool) {
+            try {
+                System.out.println("Please type the name of the employee who's leave you would like to get");
+                Employee e = state.searchEmployees(scanner.nextLine());
+                System.out.println(e.getSickLeaveLeft());
+                bool = false;
+            } catch (EmployeeNotFoundException e) {
+                System.out.println("We couldn't find that employee, try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            }
+        }
+    }
+
+    //MODIFIES: this
+    //EFFECTS: changes the comments on an instance of leave attached to an employee
+    private void changeNotesOnLeave() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+        String again;
+
+        while (bool) {
+            try {
+                System.out.println("Please type the name of the employee who's leave you would like to change");
+                Employee e = state.searchEmployees(scanner.nextLine());
+
+                System.out.println("Please type the date of leave");
+                Leave l = e.searchLeave(scanner.nextLine());
+
+                System.out.println("Please type the new comments");
+                l.setComments(scanner.nextLine());
+
+                bool = false;
+            } catch (EmployeeNotFoundException | LeaveNotFoundException e) {
+                System.out.println("That didn't work, try again? Y/N");
+                again = scanner.nextLine();
+                if (again.equals("n")) {
+                    bool = false;
+                }
+            }
+        }
+    }
+
+    //MODIFIES: this
+    //EFFECTS: changes the department of an employee
+    private void changeDepartment() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+
+        while (bool) {
+            System.out.println("Please type the name of the employee who's department you would like to change");
+            try {
+                Employee e = state.searchEmployees(scanner.nextLine());
+                System.out.println("Please type the name of the new department");
+                e.setSupervisor(scanner.nextLine());
+                System.out.println("thank you");
+                bool = false;
+
+            } catch (EmployeeNotFoundException e) {
+                System.out.println("we did not find that employee, would you like to try again? Y/N");
+                String again = scanner.nextLine().toLowerCase(Locale.ROOT);
+                if (again.equals("n")) {
+                    bool = false;
+                }
+            }
+        }
+    }
+
+    //MODIFIES: this
+    //EFFECTS: changes the supervisor of an employee
+    private void changeSupervisor() {
+        scanner = new Scanner(System.in);
+        boolean bool = true;
+
+        while (bool) {
+            System.out.println("Please type the name of the employee who's supervisor you would like to change");
+            try {
+                Employee e = state.searchEmployees(scanner.nextLine());
+                System.out.println("Please type the name of the new supervisor");
+                e.setSupervisor(scanner.nextLine());
+                System.out.println("thank you");
+                bool = false;
+
+            } catch (EmployeeNotFoundException e) {
+                System.out.println("we did not find that employee, would you like to try again? Y/N");
+                String again = scanner.nextLine().toLowerCase(Locale.ROOT);
+                if (again.equals("n")) {
+                    bool = false;
+                }
+            }
+        }
     }
 
     //REQUIRES: leaveTaken be non-empty
@@ -296,6 +428,14 @@ public class UI {
         try {
             state = jsonReader.read();
             System.out.println("Loaded state from file successfully");
+            if (!state.getCurrentDate().equals(LocalDate.now())) {
+                System.out.println("Would you like to update the date from "
+                        + state.getCurrentDate().toString() + " to "
+                        + LocalDate.now() + " Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("y")) {
+                    state.update(LocalDate.now());
+                }
+            }
         } catch (IOException e) {
             System.out.println("Unable to read file at: " + JSON_STORE);
         }
@@ -304,7 +444,10 @@ public class UI {
     //EFFECTS: terminal output of a help message
     private void help() {
         String message = "New Employee - create a new employee\n"
-                + "Take Leave - make an employee take leave on a given day\n"
+                + "Change Employee Role\n" //TODO
+                + "Change Employee Work Hours\n" //TODO
+                + "Take Holiday - make an employee take holiday on a given day\n"
+                + "Take Sick Leave - make an employee take a sick day on a given day\n"
                 + "Get Leave Taken - show all leave taken by a particular employee\n"
                 + "Get Employee Vacation Time - see how much vacation an employee has left\n"
                 + "Get Employee Sick Leave Left - see how much sick leave an employee has left\n"

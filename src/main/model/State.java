@@ -1,6 +1,6 @@
 package model;
 
-import model.leave.Leave;
+import exceptions.EmployeeNotFoundException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -49,13 +49,13 @@ public class State {
     }
 
     //EFFECTS:  Returns an instance of Employee with matching name.
-    public Employee searchEmployees(String name) {
+    public Employee searchEmployees(String name) throws EmployeeNotFoundException {
         for (Employee e: this.listOfEmployees) {
             if (e.getName().equals(name)) {
                 return e;
             }
         }
-        return null;
+        throw new EmployeeNotFoundException();
     }
 
     //REQUIRES: initial state exist

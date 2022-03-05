@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.EmployeeNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -240,18 +241,32 @@ public class StateTest {
 
     @Test
     void testSearchEmployee_Null() {
-        assertNull(employeeState.searchEmployees("Roland Radish, Regal Rennaisance Ripley"));
+        try {
+            employeeState.searchEmployees("Roland Radish, Regal Rennaisance Ripley");
+            fail("Employee should not exist");
+        } catch (EmployeeNotFoundException e) {
+            //pass
+        }
     }
 
     @Test
     void testSearchEmployee_Found() {
         employeeState.addEmployee(testEmployee1);
-        assertEquals(testEmployee1,employeeState.searchEmployees("Jerry"));
+        try {
+            employeeState.searchEmployees("Jerry");
+        } catch (EmployeeNotFoundException e) {
+            fail("Jerry should be there");
+        }
     }
 
     @Test
     void testSearchEmployee_NotFound() {
         employeeState.addEmployee(testEmployee1);
-        assertNull(employeeState.searchEmployees("Harold"));
+        try {
+            employeeState.searchEmployees("Harold");
+            fail("Harold, barely even know her (employee should not exist");
+        } catch (EmployeeNotFoundException e) {
+            // pass
+        }
     }
 }

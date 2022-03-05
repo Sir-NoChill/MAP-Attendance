@@ -1,5 +1,6 @@
 package persistance;
 
+import exceptions.EmployeeNotFoundException;
 import jdk.nashorn.internal.ir.debug.JSONWriter;
 import model.Employee;
 import model.Role;
@@ -46,7 +47,7 @@ public class JsonWriterTest extends JsonTest {
     }
 
     @Test
-    void testWriterGeneralState() {
+    void testWriterGeneralState() throws EmployeeNotFoundException {
         JsonWriter writer = new JsonWriter("./data/testWriterGeneralState.json");
         State s = new State("2022-01-01");
         Employee employee = new Employee(LocalDate.parse("2012-01-01"),

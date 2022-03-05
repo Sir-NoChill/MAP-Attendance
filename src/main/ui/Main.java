@@ -8,7 +8,7 @@ public class Main {
         try {
             new UI();
         } catch (FileNotFoundException e) {
-            System.out.println("A critical error has occured, the program will terminate");
+            System.out.println("A critical error has occurred, the program will terminate");
         }
 
     }
