@@ -101,10 +101,10 @@ public class UI {
                 loadProgramState();
                 break;
             case "change employee role":
-                changeRoleUI(); //TODO
+                changeRoleUI();
                 break;
             case "change employee work hours":
-                //changeWorkHoursUI(); //TODO
+                changeWorkHoursUI();
                 break;
             case "display employees":
                 //displayEmployeesUI(); //TODO
@@ -115,6 +115,32 @@ public class UI {
             case "show current date":
                 //showCurrentDateUI(); //TODO
                 break;
+        }
+    }
+
+    private void changeWorkHoursUI() {
+        Employee e;
+        boolean bool = true;
+        while (bool) {
+            try {
+                System.out.println("Please type the name of the employee who's work hours you would like to change");
+                e = state.searchEmployees(scanner.nextLine());
+
+                System.out.println("Please type their new number of hours per day");
+                WorkHours workHours = stringToWorkHours(scanner.nextLine());
+                e.setWorkHours(workHours);
+                bool = false;
+            } catch (EmployeeNotFoundException ex) {
+                System.out.println("We couldn't find that employee, care to try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            } catch (WorkHoursNotFoundException ex) {
+                System.out.println("That work hours assignment type doesn't exist, care to try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            }
         }
     }
 
