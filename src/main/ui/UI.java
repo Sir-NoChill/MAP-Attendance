@@ -107,7 +107,7 @@ public class UI {
                 changeWorkHoursUI();
                 break;
             case "display employees":
-                //displayEmployeesUI(); //TODO
+                displayEmployeesUI();
                 break;
             case "display employee leave":
                 //displayEmployeeLeaveUI(); //TODO
@@ -118,6 +118,16 @@ public class UI {
         }
     }
 
+    //EFFECTS: displays all employees in the current state
+    private void displayEmployeesUI() {
+        for (Employee e :
+                state.getSetOfEmployees()) {
+            System.out.println(e.getName() + "\n");
+        }
+    }
+
+    //MODIFIES this
+    //EFFECTS: changes the work hours of an employee in the current state
     private void changeWorkHoursUI() {
         Employee e;
         boolean bool = true;
@@ -144,6 +154,9 @@ public class UI {
         }
     }
 
+
+    // MODIFIES: this
+    // EFFECTS: changes the role of an employee in the current state
     private void changeRoleUI() {
         Employee e;
         boolean bool = true;
