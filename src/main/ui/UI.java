@@ -110,11 +110,44 @@ public class UI {
                 displayEmployeesUI();
                 break;
             case "display employee leave":
-                //displayEmployeeLeaveUI(); //TODO
+                displayEmployeeLeaveUI();
                 break;
             case "show current date":
                 //showCurrentDateUI(); //TODO
                 break;
+        }
+    }
+
+    //EFFECTS: display all instances of leave for an employee
+    private static void displayEmployeeLeaveInEmployee(Employee employee) {
+        StringBuilder message = new StringBuilder();
+        for (Leave l :
+                employee.getLeaveTaken()) {
+            message.append(l.getDateOfLeave()).append("\n");
+            message.append(l.getLeaveType()).append("\n");
+            message.append(l.getComments());
+
+            System.out.println(message);
+        }
+    }
+
+    //EFFECTS: show all instances of leave for a given employee
+    private void displayEmployeeLeaveUI() {
+        boolean bool = true;
+        Employee e;
+
+        while (bool) {
+            try {
+                System.out.println("please type the name of the employee who's leave you would like to see");
+                e = state.searchEmployees(scanner.nextLine());
+
+                displayEmployeeLeaveInEmployee(e);
+            } catch (EmployeeNotFoundException ex) {
+                System.out.println("We couldn't find that employee, care to try again? Y/N");
+                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
+                    bool = false;
+                }
+            }
         }
     }
 

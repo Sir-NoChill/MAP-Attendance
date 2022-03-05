@@ -47,6 +47,10 @@ public class Holiday implements Leave, Writable {
         return comments;
     }
 
+    public String getLeaveType() {
+        return "Holiday";
+    }
+
     public void setComments(String comments) {
         this.comments = comments;
     }

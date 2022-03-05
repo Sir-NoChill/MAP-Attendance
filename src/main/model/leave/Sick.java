@@ -42,6 +42,10 @@ public class Sick implements Leave {
         return comments;
     }
 
+    public String getLeaveType() {
+        return "Sick";
+    }
+
     public void setDateOfLeave(LocalDate dateOfLeave) {
         this.dateOfLeave = dateOfLeave;
     }

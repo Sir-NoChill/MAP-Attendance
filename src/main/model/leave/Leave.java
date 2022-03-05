@@ -13,6 +13,10 @@ public interface Leave {
 
     LocalDate getDateOfLeave();
 
+    String getComments();
+
+    String getLeaveType();
+
     void setComments(String comments);
 
     Object toJson();
