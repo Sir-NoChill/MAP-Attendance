@@ -113,9 +113,14 @@ public class UI {
                 displayEmployeeLeaveUI();
                 break;
             case "show current date":
-                //showCurrentDateUI(); //TODO
+                showCurrentDateUI();
                 break;
         }
+    }
+
+    //EFFECTS: shows the current date
+    private void showCurrentDateUI() {
+        System.out.println(state.getCurrentDate());
     }
 
     //EFFECTS: display all instances of leave for an employee
