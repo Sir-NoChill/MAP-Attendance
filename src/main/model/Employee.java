@@ -69,18 +69,18 @@ public class Employee implements Writable {
     //EFFECTS: creates an instance of Leave with appropriate information
     //         appends an instance of Leave to leaveTaken
     //         reduces the appropriate type of leave left to the employee
-    //FIXME allow for half days
-    public void takeLeave(LocalDate date, LeaveType leaveType, String comment) throws InvalidLeaveAmountException {
+    public void takeLeave(LocalDate date, LeaveType leaveType, String comment, double timeSegments)
+            throws InvalidLeaveAmountException {
         Leave leave;
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date, comment);
-            sickLeaveLeft -= 1;
+            this.subtractSickLeave(timeSegments);
             if (sickLeaveLeft < 0) {
                 throw new InvalidLeaveAmountException();
             }
         } else {
-            leave = new Holiday(date, comment);
-            holidayLeft -= 1;
+            leave = new Holiday(date, comment); //Should probably figure out how to throw an exception here
+            this.subtractHolidayLeave(timeSegments);
             if (holidayLeft < 0) {
                 throw new InvalidLeaveAmountException();
             }
@@ -91,39 +91,68 @@ public class Employee implements Writable {
     //REQUIRES:
     //MODIFIES: this
     //EFFECTS:  appends an instance of Leave to leaveTaken
-    public void takeLeave(String date, LeaveType leaveType, String comment) throws InvalidLeaveAmountException {
+    public void takeLeave(String date, LeaveType leaveType, String comment, double timeSegments)
+            throws InvalidLeaveAmountException {
         Leave leave;
         LocalDate date1 = LocalDate.parse(date);
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date1, comment);
-            sickLeaveLeft -= 1;
+            this.subtractSickLeave(timeSegments);
             if (sickLeaveLeft < 0) {
                 throw new InvalidLeaveAmountException();
             }
         } else {
             leave = new Holiday(date1, comment); //Should probably figure out how to throw an exception here
-            holidayLeft -= 1;
+            this.subtractHolidayLeave(timeSegments);
             if (holidayLeft < 0) {
                 throw new InvalidLeaveAmountException();
             }
         }
         this.leaveTaken.add(leave);
+    }
+
+    public void subtractSickLeave(double timeSegments) {
+        switch (this.workHours) {
+            case SIX_HALF:
+                this.sickLeaveLeft -= timeSegments / 26;
+            case SEVEN:
+                this.sickLeaveLeft -= timeSegments / 28;
+            case SEVEN_HALF:
+                this.sickLeaveLeft -= timeSegments / 30;
+        }
+    }
+
+    public void subtractHolidayLeave(double timeSegments) {
+        switch (workHours) {
+            case SIX_HALF:
+                holidayLeft -= timeSegments / 26;
+            case SEVEN:
+                holidayLeft -= timeSegments / 28;
+            case SEVEN_HALF:
+                holidayLeft -= timeSegments / 30;
+        }
     }
 
     //REQUIRES:
     //MODIFIES: this
     //EFFECTS:  appends an instance of Leave to leaveTaken
     //          this is to be used for the JSON Parsing so that it does not need to throw an error.
-    public void addLeaveToEmployee(String date, LeaveType leaveType, String comment) {
+    public void addLeaveToEmployee(String date, LeaveType leaveType, String comment, double timeSegments)
+            throws InvalidLeaveAmountException {
         Leave leave;
         LocalDate date1 = LocalDate.parse(date);
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date1, comment);
-            sickLeaveLeft -= 1;
-            //IDEAS make the method more general
+            this.subtractSickLeave(timeSegments);
+            if (sickLeaveLeft < 0) {
+                throw new InvalidLeaveAmountException();
+            }
         } else {
             leave = new Holiday(date1, comment); //Should probably figure out how to throw an exception here
-            holidayLeft -= 1;
+            this.subtractHolidayLeave(timeSegments);
+            if (holidayLeft < 0) {
+                throw new InvalidLeaveAmountException();
+            }
         }
         this.leaveTaken.add(leave);
     }
