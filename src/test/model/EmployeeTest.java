@@ -25,7 +25,6 @@ class EmployeeTest {
     Employee testEmployee3;
     Employee testEmployee4;
 
-    //TODO define the constructions of the employees
     @BeforeEach
     public void beforeEach() {
         testEmployee1 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
@@ -34,7 +33,7 @@ class EmployeeTest {
         testEmployee4 = new Employee(LocalDate.of(2017,5,13),ACCOUNTANT,"Carol",SIX_HALF,"Vane","Bert");
     }
 
-    @Test //TODO check the rest of the test employee constructions
+    @Test
     public void testEmployeeConstructorTestCase1() {
         assertEquals("Jerry", testEmployee1.getName());
         assertEquals(LEGAL_ASSISTANT, testEmployee1.getRole());

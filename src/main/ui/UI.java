@@ -521,8 +521,8 @@ public class UI {
     //EFFECTS: terminal output of a help message
     private void help() {
         String message = "New Employee - create a new employee\n"
-                + "Change Employee Role\n" //TODO
-                + "Change Employee Work Hours\n" //TODO
+                + "Change Employee Role - changes the role of an employee\n"
+                + "Change Employee Work Hours - changes the work hours of an employee"
                 + "Take Holiday - make an employee take holiday on a given day\n"
                 + "Take Sick Leave - make an employee take a sick day on a given day\n"
                 + "Get Leave Taken - show all leave taken by a particular employee\n"

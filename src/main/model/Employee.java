@@ -33,8 +33,6 @@ public class Employee implements Writable {
     private double sickLeaveLeft;    //Sick leave left at any temporal state
     private final double sickLeaveAccrual = 6; //Sick leave accrued per month
 
-    //TODO overload the constructor to accept more different date formats?
-    //TODO overload constructor to accept Strings as Roles
     public Employee(LocalDate anniversary, Role role, String name, WorkHours workHours,
                     String supervisor, String department) {
         this.anniversary = anniversary;
@@ -47,7 +45,7 @@ public class Employee implements Writable {
         this.sickLeaveLeft = sickLeaveAccrual;
         autoSetYearsOfService();
         this.holidayAccrual = 0;
-        this.department = department; //TODO make the department an Enum??
+        this.department = department; //IDEAS make the department an Enum??
         autoSetHolidayAccrualRate();
     }
 
@@ -57,7 +55,7 @@ public class Employee implements Writable {
         this.role = role;
         this.name = name;
         this.workHours = workHours;
-        this.supervisor = supervisor; //TODO maybe make this of type employee?
+        this.supervisor = supervisor; //IDEAS maybe make this of type employee?
         this.department = department;
         this.leaveTaken = new HashSet<>();
         this.holidayLeft = 0;
@@ -71,8 +69,8 @@ public class Employee implements Writable {
     //EFFECTS: creates an instance of Leave with appropriate information
     //         appends an instance of Leave to leaveTaken
     //         reduces the appropriate type of leave left to the employee
+    //FIXME allow for half days
     public void takeLeave(LocalDate date, LeaveType leaveType, String comment) throws InvalidLeaveAmountException {
-        //FIXME add exception throws
         Leave leave;
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date, comment);
@@ -112,7 +110,6 @@ public class Employee implements Writable {
         this.leaveTaken.add(leave);
     }
 
-    //TODO
     //REQUIRES:
     //MODIFIES: this
     //EFFECTS:  appends an instance of Leave to leaveTaken
@@ -123,7 +120,7 @@ public class Employee implements Writable {
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date1, comment);
             sickLeaveLeft -= 1;
-            //TODO make the method more general
+            //IDEAS make the method more general
         } else {
             leave = new Holiday(date1, comment); //Should probably figure out how to throw an exception here
             holidayLeft -= 1;
@@ -192,8 +189,6 @@ public class Employee implements Writable {
         this.yearsOfService = Period.between(this.anniversary,LocalDate.now()).getYears();
     }
 
-    //TODO create method display leave for employee
-
     //EFFECTS:  Returns an instance of leave with matching date.
     public Leave searchLeave(String date) throws LeaveNotFoundException {
         LocalDate realDate = LocalDate.parse(date);
@@ -206,7 +201,6 @@ public class Employee implements Writable {
     }
 
     public static Role stringToRole(String s) throws RoleNotFoundException {
-        //FIXME do a try-catch
         s = s.toLowerCase();
         switch (s) {
             case "accountant":
@@ -224,7 +218,6 @@ public class Employee implements Writable {
     }
 
     public static WorkHours stringToWorkHours(String s) throws WorkHoursNotFoundException {
-        //FIXME do a try-catch
         s = s.toLowerCase();
         switch (s) {
             case "six_half":
@@ -307,10 +300,6 @@ public class Employee implements Writable {
     public Set<Leave> getLeaveTaken() {
         return leaveTaken;
     }
-
-    //public void setSickLeaveAccrual(double sickLeaveAccrual) {//TODO reimplement in GUI later?
-    //    this.sickLeaveAccrual = sickLeaveAccrual;
-    //}
 
     public void setAnniversary(LocalDate anniversary) {
         this.anniversary = anniversary;

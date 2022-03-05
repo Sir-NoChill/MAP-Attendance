@@ -36,18 +36,6 @@ public class State {
         this.listOfEmployees.add(employee);
     }
 
-    //REQUIRES: employees must be non-empty
-    //MODIFIES:
-    //EFFECTS : prints the name of all employees
-    public String displayEmployees() { //FIXME this should be changed to a more proper representation of a table etc.
-        StringBuilder names = new StringBuilder();
-        for (Employee employee : listOfEmployees) {
-            names.append(employee.getName()).append(", ");
-        }
-
-        return names.toString();
-    }
-
     //EFFECTS:  Returns an instance of Employee with matching name.
     public Employee searchEmployees(String name) throws EmployeeNotFoundException {
         for (Employee e: this.listOfEmployees) {
@@ -60,13 +48,10 @@ public class State {
 
     //REQUIRES: initial state exist
     //          and be distinct from attempted update
-    //          (//FIXME) and in the future (to change)
     //MODIFIES: this
     //EFFECTS: changes the current date of the state
     //         updates employees holiday
     //         updates employee sick
-    //TODO Find a way to restore a previous state
-    //TODO Implement in the save system
     public void update(LocalDate newDate) {
         long daysBetween = ChronoUnit.DAYS.between(this.currentDate,newDate);
         int intDaysBetween = Math.toIntExact(daysBetween);

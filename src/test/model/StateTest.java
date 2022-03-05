@@ -28,10 +28,6 @@ public class StateTest {
     Employee easyTestEmployee2;
     Employee easyTestEmployee3;
 
-    //@BeforeAll
-    //public static void setupEmployees() {
-    //}//FIXME how does this @beforeall tag work
-
     @BeforeEach
     public void setup() {
         initialState = new State("2022-02-09");
@@ -70,14 +66,6 @@ public class StateTest {
         assertEquals(2,initialState.getSetOfEmployees().size());
         initialState.addEmployee(testEmployee2);
         assertEquals(2,initialState.getSetOfEmployees().size());
-    }
-
-    @Test
-    public void testDisplayEmployee() {
-        initialState.addEmployee(testEmployee2);
-        initialState.addEmployee(testEmployee1);
-        assertTrue(initialState.displayEmployees().contains("Jerry"));
-        assertTrue(initialState.displayEmployees().contains("Harold"));
     }
 
     @Test

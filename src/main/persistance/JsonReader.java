@@ -111,7 +111,6 @@ public class JsonReader {
             employee.addLeaveToEmployee(date, LeaveType.SICK,comments);
         } else {
             employee.addLeaveToEmployee(date, LeaveType.HOLIDAY,comments);
-            //TODO make sure to add these into the toJson in leave
         }
 
     }
