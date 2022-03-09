@@ -9,15 +9,18 @@ public class Sick implements Leave {
 
     LocalDate dateOfLeave;
     String comments;
+    double timeSegments;
 
-    public Sick(LocalDate dateOfLeave, String comments) {
+    public Sick(LocalDate dateOfLeave, String comments,double timeSegments) {
         this.dateOfLeave = dateOfLeave;
         this.comments = comments;
+        this.timeSegments = timeSegments;
     }
 
-    public Sick(String dateOfLeave, String comments) {
+    public Sick(String dateOfLeave, String comments, double timeSegments) {
         this.dateOfLeave = LocalDate.parse(dateOfLeave);
         this.comments = comments;
+        this.timeSegments = timeSegments;
     }
 
     public JSONObject toJson() {
@@ -25,6 +28,7 @@ public class Sick implements Leave {
         json.put("leaveDate",dateOfLeave);
         json.put("comments",comments);
         json.put("leaveType","Sick");
+        json.put("timeSegments",timeSegments);
 
         return json;
     }

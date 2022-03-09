@@ -69,7 +69,6 @@ public class JsonReader {
         String department = jsonObject.getString("department");
 
         String role = jsonObject.getString("role");
-        String workHours = jsonObject.getString("workHours");
 
         String anniversary = jsonObject.getString("anniversary");
 
@@ -77,16 +76,16 @@ public class JsonReader {
 
         double sickLeaveLeft = jsonObject.getDouble("sickLeaveLeft");
 
+        double workHours = jsonObject.getDouble("workHours");
+
         Role role1;
-        WorkHours workHours1;
         try {
             role1 = Employee.stringToRole(role.toLowerCase());
-            workHours1 = Employee.stringToWorkHours(workHours.toLowerCase());
-        } catch (RoleNotFoundException | WorkHoursNotFoundException e) {
+        } catch (RoleNotFoundException e) {
             throw new FileLoadError();
         }
 
-        Employee e = new Employee(anniversary, role1, name, workHours1, supervisor, department);
+        Employee e = new Employee(anniversary, role1, name, workHours, supervisor, department);
         e.setHolidayLeft(holidayLeft);
         e.setSickLeaveLeft(sickLeaveLeft);
         addLeaves(e, jsonObject);
@@ -106,11 +105,12 @@ public class JsonReader {
     private void addLeave(Employee employee, JSONObject jsonObject) {
         String date = jsonObject.getString("leaveDate");
         String comments = jsonObject.getString("comments");
+        double timeSegments = jsonObject.getDouble("timeSegments");
 
         if (Objects.equals(jsonObject.getString("leaveType"), "Sick")) {
-            employee.addLeaveToEmployee(date, LeaveType.SICK,comments);
+            employee.addLeaveToEmployee(date, LeaveType.SICK,comments,timeSegments);
         } else {
-            employee.addLeaveToEmployee(date, LeaveType.HOLIDAY,comments);
+            employee.addLeaveToEmployee(date, LeaveType.HOLIDAY,comments,timeSegments);
         }
 
     }

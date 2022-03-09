@@ -6,9 +6,10 @@
         "leave": [{
             "comments": "Jerry got eaten by a possum",
             "leaveType": "Sick",
-            "leaveDate": "2018-07-13"
+            "leaveDate": "2018-07-13",
+            "timeSegments": 22
         }],
-        "workHours": "SEVEN",
+        "workHours": 7,
         "name": "Jerry",
         "department": "Harry Potter",
         "anniversary": "2012-01-01",

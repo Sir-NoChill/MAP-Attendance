@@ -43,9 +43,9 @@ public class JsonReaderTest extends JsonTest{
         try {
             State s = reader.read();
             Employee employee = new Employee(LocalDate.parse("2012-01-01"),
-                    Role.HUMAN_RESOURCES,"Jerry", WorkHours.SEVEN,"Mom",
+                    Role.HUMAN_RESOURCES,"Jerry", 7,"Mom",
                     "Harry Potter");
-            employee.addLeaveToEmployee("2018-07-13", LeaveType.SICK,"Jerry got eaten by a possum");
+            employee.addLeaveToEmployee("2018-07-13", LeaveType.SICK,"Jerry got eaten by a possum",28);
             assertEquals(LocalDate.parse("2022-03-01"),s.getCurrentDate());
             assertEquals(1,s.getSetOfEmployees().size());
         } catch (IOException e) {

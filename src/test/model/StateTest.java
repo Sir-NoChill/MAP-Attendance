@@ -34,14 +34,14 @@ public class StateTest {
         finalState = new State("2100-01-01");
         currentState = new State(LocalDate.now());
 
-        testEmployee1 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
-        testEmployee2 = new Employee(LocalDate.now(), HUMAN_RESOURCES, "Harold", SEVEN_HALF, "Kane", "Realty");
-        testEmployee3 = new Employee("2015-08-07",ACCOUNTANT,"Merry",SEVEN,"Bane","Wills");
-        testEmployee4 = new Employee(LocalDate.of(2017,5,13),ACCOUNTANT,"Carol",SIX_HALF,"Vane","Bert");
+        testEmployee1 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", 6.5, "Jane", "Criminal Law");
+        testEmployee2 = new Employee(LocalDate.now(), HUMAN_RESOURCES, "Harold", 7.5, "Kane", "Realty");
+        testEmployee3 = new Employee("2015-08-07",ACCOUNTANT,"Merry",7,"Bane","Wills");
+        testEmployee4 = new Employee(LocalDate.of(2017,5,13),ACCOUNTANT,"Carol",6.5,"Vane","Bert");
 
-        easyTestEmployee1 = new Employee("2002-01-01", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
-        easyTestEmployee2 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
-        easyTestEmployee3 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
+        easyTestEmployee1 = new Employee("2002-01-01", LEGAL_ASSISTANT, "Jerry", 6.5, "Jane", "Criminal Law");
+        easyTestEmployee2 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", 6.5, "Jane", "Criminal Law");
+        easyTestEmployee3 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", 6.5, "Jane", "Criminal Law");
 
         employeeState = new State("2010-01-01");
     }

@@ -51,13 +51,13 @@ public class JsonWriterTest extends JsonTest {
         JsonWriter writer = new JsonWriter("./data/testWriterGeneralState.json");
         State s = new State("2022-01-01");
         Employee employee = new Employee(LocalDate.parse("2012-01-01"),
-                Role.HUMAN_RESOURCES,"Jerry", WorkHours.SEVEN,"Mom",
+                Role.HUMAN_RESOURCES,"Jerry", 7,"Mom",
                 "Harry Potter");
         employee.setHolidayLeft(50);
         employee.setSickLeaveLeft(50);
-        employee.addLeaveToEmployee("2021-03-04", LeaveType.SICK,"Hit by a bus");
+        employee.addLeaveToEmployee("2021-03-04", LeaveType.SICK,"Hit by a bus",28);
         s.addEmployee(employee);
-        employee.addLeaveToEmployee("2020-01-04",LeaveType.HOLIDAY,"Wedding");
+        employee.addLeaveToEmployee("2020-01-04",LeaveType.HOLIDAY,"Wedding",28);
 
         try {
             writer.open();
@@ -71,6 +71,7 @@ public class JsonWriterTest extends JsonTest {
             Employee employee1 = s.searchEmployees("Jerry");
             assertEquals("Jerry",employee1.getName());
             assertEquals(2,employee1.getLeaveTaken().size());
+            assertEquals(7,employee1.getWorkHours());
         } catch (IOException e) {
             fail("Exception should not have been thrown");
         }

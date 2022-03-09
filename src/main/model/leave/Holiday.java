@@ -10,15 +10,18 @@ public class Holiday implements Leave, Writable {
 
     private LocalDate dateOfLeave;
     private String comments;
+    private double timeSegments;
 
-    public Holiday(LocalDate dateOfLeave, String comments) {
+    public Holiday(LocalDate dateOfLeave, String comments,double timeSegments) {
         this.dateOfLeave = dateOfLeave;
         this.comments = comments;
+        this.timeSegments = timeSegments;
     }
 
-    public Holiday(String dateOfLeave, String comments) {
+    public Holiday(String dateOfLeave, String comments,double timeSegments) {
         this.dateOfLeave = LocalDate.parse(dateOfLeave);
         this.comments = comments;
+        this.timeSegments = timeSegments;
     }
 
     public JSONObject toJson() {
@@ -26,6 +29,7 @@ public class Holiday implements Leave, Writable {
         json.put("leaveDate",dateOfLeave);
         json.put("comments",comments);
         json.put("leaveType","Holiday");
+        json.put("timeSegments", timeSegments);
 
         return json;
     }
@@ -54,6 +58,4 @@ public class Holiday implements Leave, Writable {
     public void setComments(String comments) {
         this.comments = comments;
     }
-
-    //TODO edit leave by referencing date (employee object?)
 }

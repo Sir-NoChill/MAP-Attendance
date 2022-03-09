@@ -73,13 +73,13 @@ public class Employee implements Writable {
             throws InvalidLeaveAmountException {
         Leave leave;
         if (leaveType == LeaveType.SICK) {
-            leave = new Sick(date, comment);
+            leave = new Sick(date, comment,timeSegments);
             this.subtractSickLeave(timeSegments);
             if (sickLeaveLeft < 0) {
                 throw new InvalidLeaveAmountException();
             }
         } else {
-            leave = new Holiday(date, comment); //Should probably figure out how to throw an exception here
+            leave = new Holiday(date, comment, timeSegments);
             this.subtractHolidayLeave(timeSegments);
             if (holidayLeft < 0) {
                 throw new InvalidLeaveAmountException();
@@ -96,13 +96,13 @@ public class Employee implements Writable {
         Leave leave;
         LocalDate date1 = LocalDate.parse(date);
         if (leaveType == LeaveType.SICK) {
-            leave = new Sick(date1, comment);
+            leave = new Sick(date1, comment,timeSegments);
             this.subtractSickLeave(timeSegments);
             if (sickLeaveLeft < 0) {
                 throw new InvalidLeaveAmountException();
             }
         } else {
-            leave = new Holiday(date1, comment); //Should probably figure out how to throw an exception here
+            leave = new Holiday(date1, comment,timeSegments);
             this.subtractHolidayLeave(timeSegments);
             if (holidayLeft < 0) {
                 throw new InvalidLeaveAmountException();
@@ -127,10 +127,10 @@ public class Employee implements Writable {
         Leave leave;
         LocalDate date1 = LocalDate.parse(date);
         if (leaveType == LeaveType.SICK) {
-            leave = new Sick(date1, comment);
+            leave = new Sick(date1, comment,timeSegments);
             this.subtractSickLeave(timeSegments);
         } else {
-            leave = new Holiday(date1, comment);
+            leave = new Holiday(date1, comment,timeSegments);
             this.subtractHolidayLeave(timeSegments);
         }
         this.leaveTaken.add(leave);

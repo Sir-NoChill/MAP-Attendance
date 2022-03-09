@@ -17,11 +17,11 @@ public class LeaveTest {
 
     @BeforeEach
     public void setup() {
-        holiday1 = new Holiday("2023-12-02", "Dildo, NL, Canada");
-        holiday2 = new Holiday(LocalDate.now(),"Obama Junior High School, nagasaki, Japan");
+        holiday1 = new Holiday("2023-12-02", "Dildo, NL, Canada",22);
+        holiday2 = new Holiday(LocalDate.now().toString(),"Obama Junior High School, nagasaki, Japan",27);
 
-        sick1 = new Sick("2022-04-02","Covid-19");
-        sick2 = new Sick(LocalDate.parse("2021-08-11"),"Hit by lightning thrice, went to hospital");
+        sick1 = new Sick("2022-04-02","Covid-19",14);
+        sick2 = new Sick(LocalDate.parse("2021-08-11"),"Hit by lightning thrice, went to hospital",31);
     }
 
     @Test
