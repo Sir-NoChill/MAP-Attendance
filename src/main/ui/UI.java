@@ -223,7 +223,7 @@ public class UI {
         scanner = new Scanner(System.in);
         boolean bool = true;
         Role role = null;
-        WorkHours workHours = null;
+        double workHours = 0;
 
         while (bool) {
             System.out.println("Please type the following followed by a newline: anniversary (yyyy-mm-dd),"
@@ -239,14 +239,8 @@ public class UI {
                 }
             }
             String name = scanner.nextLine();
-            try {
-                workHours = stringToWorkHours(scanner.nextLine());
-            } catch (WorkHoursNotFoundException e) {
-                System.out.println("We weren't able to parse that, try again? Y/N");
-                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
-                    bool = false;
-                }
-            }
+            workHours = scanner.nextDouble();
+
 
             String supervisor = scanner.nextLine();
             String department = scanner.nextLine();
