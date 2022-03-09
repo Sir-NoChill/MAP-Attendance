@@ -24,7 +24,7 @@ public class Employee implements Writable {
     private Role role;
     private int yearsOfService;
     private String name;
-    private int workHours;    //Enum of the number of hours worked per day, translated to float in the UI
+    private double workHours;    //Enum of the number of hours worked per day, translated to float in the UI
     private Set<Leave> leaveTaken;
     private String supervisor;
     private String department;
@@ -33,7 +33,7 @@ public class Employee implements Writable {
     private double sickLeaveLeft;    //Sick leave left at any temporal state
     private final double sickLeaveAccrual = 6; //Sick leave accrued per month
 
-    public Employee(LocalDate anniversary, Role role, String name, int workHours,
+    public Employee(LocalDate anniversary, Role role, String name, double workHours,
                     String supervisor, String department) {
         this.anniversary = anniversary;
         this.role = role;
@@ -49,7 +49,7 @@ public class Employee implements Writable {
         autoSetHolidayAccrualRate();
     }
 
-    public Employee(String anniversary, Role role, String name, int workHours,
+    public Employee(String anniversary, Role role, String name, double workHours,
                     String supervisor, String department) {
         this.anniversary = LocalDate.parse(anniversary);
         this.role = role;
@@ -123,22 +123,15 @@ public class Employee implements Writable {
     //MODIFIES: this
     //EFFECTS:  appends an instance of Leave to leaveTaken
     //          this is to be used for the JSON Parsing so that it does not need to throw an error.
-    public void addLeaveToEmployee(String date, LeaveType leaveType, String comment, double timeSegments)
-            throws InvalidLeaveAmountException {
+    public void addLeaveToEmployee(String date, LeaveType leaveType, String comment, double timeSegments) {
         Leave leave;
         LocalDate date1 = LocalDate.parse(date);
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date1, comment);
             this.subtractSickLeave(timeSegments);
-            if (sickLeaveLeft < 0) {
-                throw new InvalidLeaveAmountException();
-            }
         } else {
-            leave = new Holiday(date1, comment); //Should probably figure out how to throw an exception here
+            leave = new Holiday(date1, comment);
             this.subtractHolidayLeave(timeSegments);
-            if (holidayLeft < 0) {
-                throw new InvalidLeaveAmountException();
-            }
         }
         this.leaveTaken.add(leave);
     }
@@ -288,7 +281,7 @@ public class Employee implements Writable {
         return name;
     }
 
-    public int getWorkHours() {
+    public double getWorkHours() {
         return workHours;
     }
 
@@ -332,7 +325,7 @@ public class Employee implements Writable {
         this.name = name;
     }
 
-    public void setWorkHours(int workHours) {
+    public void setWorkHours(double workHours) {
         this.workHours = workHours;
     }
 

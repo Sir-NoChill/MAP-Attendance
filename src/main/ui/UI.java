@@ -175,16 +175,11 @@ public class UI {
                 e = state.searchEmployees(scanner.nextLine());
 
                 System.out.println("Please type their new number of hours per day");
-                WorkHours workHours = stringToWorkHours(scanner.nextLine());
+                double workHours = scanner.nextDouble();
                 e.setWorkHours(workHours);
                 bool = false;
             } catch (EmployeeNotFoundException ex) {
                 System.out.println("We couldn't find that employee, care to try again? Y/N");
-                if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
-                    bool = false;
-                }
-            } catch (WorkHoursNotFoundException ex) {
-                System.out.println("That work hours assignment type doesn't exist, care to try again? Y/N");
                 if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("n")) {
                     bool = false;
                 }
@@ -272,6 +267,7 @@ public class UI {
         Employee employee = null;
         String date = null;
         String comments = null;
+        double time = 0;
 
         while (bool) {
             try {
@@ -284,7 +280,11 @@ public class UI {
                 System.out.println("Please type any comments:");
                 comments = scanner.nextLine();
 
-                employee.takeLeave(date, LeaveType.SICK,comments);
+                System.out.println("Please type the number of time segments the employee will take off"
+                        + " (15-minute increments)");
+                time = scanner.nextDouble();
+
+                employee.takeLeave(date, LeaveType.SICK,comments,time);
                 bool = false;
             } catch (EmployeeNotFoundException e) {
                 System.out.println("We couldn't find that employee, try again? Y/N");
@@ -294,7 +294,7 @@ public class UI {
             } catch (InvalidLeaveAmountException e) {
                 System.out.println("The employee has no more leave of that type left, override? Y/N");
                 if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("y")) {
-                    employee.addLeaveToEmployee(date, LeaveType.SICK, comments);
+                    employee.addLeaveToEmployee(date, LeaveType.SICK, comments,time);
                 }
             }
         }
@@ -310,6 +310,7 @@ public class UI {
         Employee employee = null;
         String date = null;
         String comments = null;
+        double time = 0;
 
         while (bool) {
             try {
@@ -322,7 +323,11 @@ public class UI {
                 System.out.println("Please type any comments:");
                 comments = scanner.nextLine();
 
-                employee.takeLeave(date, LeaveType.HOLIDAY,comments);
+                System.out.println("Please type the number of time segments the employee will take off"
+                        + " (15-minute increments)");
+                time = scanner.nextDouble();
+
+                employee.takeLeave(date, LeaveType.HOLIDAY,comments,time);
                 bool = false;
             } catch (EmployeeNotFoundException e) {
                 System.out.println("We couldn't find that employee, try again? Y/N");
@@ -332,7 +337,7 @@ public class UI {
             } catch (InvalidLeaveAmountException e) {
                 System.out.println("The employee has no more leave of that type left, override? Y/N");
                 if (scanner.nextLine().toLowerCase(Locale.ROOT).equals("y")) {
-                    employee.addLeaveToEmployee(date, LeaveType.HOLIDAY, comments);
+                    employee.addLeaveToEmployee(date, LeaveType.HOLIDAY, comments,time);
                 }
             }
         }

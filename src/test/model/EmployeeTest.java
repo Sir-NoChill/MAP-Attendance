@@ -97,8 +97,8 @@ class EmployeeTest {
 
     @Test
     public void testSetWorkHours() {
-        testEmployee1.setWorkHours(SIX_HALF);
-        assertEquals(SIX_HALF,testEmployee1.getWorkHours());
+        testEmployee1.setWorkHours(6.5);
+        assertEquals(6.5,testEmployee1.getWorkHours());
     }
 
     @Test
