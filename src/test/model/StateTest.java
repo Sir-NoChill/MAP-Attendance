@@ -9,8 +9,6 @@ import java.time.LocalDate;
 
 import static model.Role.*;
 import static model.Role.ACCOUNTANT;
-import static model.WorkHours.*;
-import static model.WorkHours.SIX_HALF;
 
 public class StateTest {
 

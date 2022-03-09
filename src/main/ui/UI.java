@@ -4,7 +4,6 @@ import exceptions.*;
 import model.Employee;
 import model.Role;
 import model.State;
-import model.WorkHours;
 import model.leave.Leave;
 import model.leave.LeaveType;
 import persistance.JsonReader;
@@ -17,7 +16,6 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import static model.Employee.stringToRole;
-import static model.Employee.stringToWorkHours;
 
 public class UI {
     private Scanner scanner;

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static model.Employee.stringToRole;
-import static model.Employee.stringToWorkHours;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -17,7 +16,6 @@ import java.time.Period;
 
 import static model.Role.*;
 import static model.leave.LeaveType.*;
-import static model.WorkHours.*;
 
 class EmployeeTest {
     Employee testEmployee1;
@@ -414,46 +412,6 @@ class EmployeeTest {
             assertNull(stringToRole("silly goose"));
             fail("RoleNotFoundException expected");
         } catch (RoleNotFoundException e) {
-            //pass
-        }
-    }
-
-    @Test
-    void testStringToWorkHours_SIX_HALF() {
-        try {
-            assertEquals(SIX_HALF,stringToWorkHours("six_half"));
-            assertEquals(SIX_HALF,stringToWorkHours("6.5"));
-        } catch (WorkHoursNotFoundException e) {
-            fail("No exception expected");
-        }
-    }
-
-    @Test
-    void testStringToWorkHours_SEVEN() {
-        try {
-            assertEquals(SEVEN,stringToWorkHours("seven"));
-            assertEquals(SEVEN,stringToWorkHours("7"));
-        } catch (WorkHoursNotFoundException e) {
-            fail("No exception expected");
-        }
-    }
-
-    @Test
-    void testStringToWorkHours_SEVEN_HALF() {
-        try {
-            assertEquals(SEVEN_HALF,stringToWorkHours("7.5"));
-            assertEquals(SEVEN_HALF,stringToWorkHours("seven_half"));
-        } catch (WorkHoursNotFoundException e) {
-            fail("No exception expected");
-        }
-    }
-
-    @Test
-    void testStringToWorkHours_Null() {
-        try {
-            assertNull(stringToWorkHours("eeee"));
-            fail("WorkHoursNotFoundException expected");
-        } catch (WorkHoursNotFoundException e) {
             //pass
         }
     }

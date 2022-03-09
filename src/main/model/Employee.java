@@ -225,23 +225,6 @@ public class Employee implements Writable {
         }
     }
 
-    public static WorkHours stringToWorkHours(String s) throws WorkHoursNotFoundException {
-        s = s.toLowerCase();
-        switch (s) {
-            case "six_half":
-            case "6.5":
-                return WorkHours.SIX_HALF;
-            case "seven":
-            case "7":
-                return WorkHours.SEVEN;
-            case "seven_half":
-            case "7.5":
-                return WorkHours.SEVEN_HALF;
-            default:
-                throw new WorkHoursNotFoundException();
-        }
-    }
-
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
