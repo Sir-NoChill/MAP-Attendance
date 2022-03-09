@@ -24,7 +24,7 @@ public class Employee implements Writable {
     private Role role;
     private int yearsOfService;
     private String name;
-    private WorkHours workHours;    //Enum of the number of hours worked per day, translated to float in the UI
+    private int workHours;    //Enum of the number of hours worked per day, translated to float in the UI
     private Set<Leave> leaveTaken;
     private String supervisor;
     private String department;
@@ -33,7 +33,7 @@ public class Employee implements Writable {
     private double sickLeaveLeft;    //Sick leave left at any temporal state
     private final double sickLeaveAccrual = 6; //Sick leave accrued per month
 
-    public Employee(LocalDate anniversary, Role role, String name, WorkHours workHours,
+    public Employee(LocalDate anniversary, Role role, String name, int workHours,
                     String supervisor, String department) {
         this.anniversary = anniversary;
         this.role = role;
@@ -49,7 +49,7 @@ public class Employee implements Writable {
         autoSetHolidayAccrualRate();
     }
 
-    public Employee(String anniversary, Role role, String name, WorkHours workHours,
+    public Employee(String anniversary, Role role, String name, int workHours,
                     String supervisor, String department) {
         this.anniversary = LocalDate.parse(anniversary);
         this.role = role;
@@ -112,25 +112,11 @@ public class Employee implements Writable {
     }
 
     public void subtractSickLeave(double timeSegments) {
-        switch (this.workHours) {
-            case SIX_HALF:
-                this.sickLeaveLeft -= timeSegments / 26;
-            case SEVEN:
-                this.sickLeaveLeft -= timeSegments / 28;
-            case SEVEN_HALF:
-                this.sickLeaveLeft -= timeSegments / 30;
-        }
+        this.sickLeaveLeft -= timeSegments / (workHours * 4);
     }
 
     public void subtractHolidayLeave(double timeSegments) {
-        switch (workHours) {
-            case SIX_HALF:
-                holidayLeft -= timeSegments / 26;
-            case SEVEN:
-                holidayLeft -= timeSegments / 28;
-            case SEVEN_HALF:
-                holidayLeft -= timeSegments / 30;
-        }
+        this.holidayLeft -= timeSegments / (workHours * 4);
     }
 
     //REQUIRES:
@@ -302,7 +288,7 @@ public class Employee implements Writable {
         return name;
     }
 
-    public WorkHours getWorkHours() {
+    public int getWorkHours() {
         return workHours;
     }
 
@@ -346,7 +332,7 @@ public class Employee implements Writable {
         this.name = name;
     }
 
-    public void setWorkHours(WorkHours workHours) {
+    public void setWorkHours(int workHours) {
         this.workHours = workHours;
     }
 
