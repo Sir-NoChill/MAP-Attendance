@@ -379,6 +379,26 @@ class EmployeeTest {
     }
 
     @Test
+    public void testSearchLeaveCase3() throws InvalidLeaveAmountException {
+        testEmployee1.setSickLeaveLeft(50);
+        testEmployee1.setHolidayLeft(50);
+
+        testEmployee1.takeLeave("2020-07-08", HOLIDAY, "Off to commit arson",26);
+        testEmployee1.takeLeave("2020-07-09",HOLIDAY,"Commited some arson, now in jail",26);
+
+        testEmployee1.takeLeave(LocalDate.now(),SICK,"Ash in lungs from arson",26);
+        testEmployee1.takeLeave("2007-04-03",SICK,"Got stabbed",26);
+
+        Leave searchResult;
+        try {
+            searchResult = testEmployee1.searchLeave("2020-06-08");
+            fail("Exception expected");
+        } catch (LeaveNotFoundException e) {
+            //pass
+        }
+    }
+
+    @Test
     void testStringToRole_Accountant() {
         try {
             assertEquals(ACCOUNTANT,stringToRole("accountant"));

@@ -52,7 +52,7 @@ public class Holiday implements Leave, Writable {
     }
 
     public String getLeaveType() {
-        return "Holiday";
+        return LeaveType.HOLIDAY.toString();
     }
 
     public void setComments(String comments) {

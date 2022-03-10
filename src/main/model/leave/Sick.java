@@ -47,7 +47,7 @@ public class Sick implements Leave {
     }
 
     public String getLeaveType() {
-        return "Sick";
+        return LeaveType.SICK.toString();
     }
 
     public void setDateOfLeave(LocalDate dateOfLeave) {

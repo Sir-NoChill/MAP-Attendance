@@ -74,4 +74,10 @@ public class LeaveTest {
         assertEquals(SICK.toString(),sick1.getLeaveType());
         assertEquals(HOLIDAY.toString(),holiday2.getLeaveType());
     }
+
+    @Test
+    public void testGetLeaveType2() {
+        assertEquals(HOLIDAY.toString(),holiday2.getLeaveType());
+        assertEquals(SICK.toString(),sick1.getLeaveType());
+    }
 }
