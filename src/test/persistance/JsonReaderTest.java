@@ -1,9 +1,9 @@
 package persistance;
 
+import exceptions.FileLoadError;
 import model.Employee;
 import model.Role;
 import model.State;
-import model.WorkHours;
 import model.leave.LeaveType;
 import org.junit.jupiter.api.Test;
 
@@ -43,13 +43,26 @@ public class JsonReaderTest extends JsonTest{
         try {
             State s = reader.read();
             Employee employee = new Employee(LocalDate.parse("2012-01-01"),
-                    Role.HUMAN_RESOURCES,"Jerry", WorkHours.SEVEN,"Mom",
+                    Role.HUMAN_RESOURCES,"Jerry", 7,"Mom",
                     "Harry Potter");
-            employee.addLeaveToEmployee("2018-07-13", LeaveType.SICK,"Jerry got eaten by a possum");
+            employee.addLeaveToEmployee("2018-07-13", LeaveType.SICK,"Jerry got eaten by a possum",28);
             assertEquals(LocalDate.parse("2022-03-01"),s.getCurrentDate());
             assertEquals(1,s.getSetOfEmployees().size());
         } catch (IOException e) {
             fail("Could not read from file");
+        }
+    }
+
+    @Test
+    void testReaderOneEmployeeState_failureToLoad() {
+        JsonReader reader = new JsonReader("./data/oneEmployeeState-fail.json");
+        try {
+            State s = reader.read();
+            fail("read from file that is supposed to be illegal");
+        } catch (IOException e) {
+            fail("Expect fileloadError");
+        } catch (FileLoadError e) {
+            //pass
         }
     }
 }

@@ -3,7 +3,6 @@ package persistance;
 import model.Employee;
 import model.Role;
 import model.State;
-import model.WorkHours;
 import model.leave.Holiday;
 import model.leave.Sick;
 
@@ -13,7 +12,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonTest {
-    protected void checkEmployee(LocalDate anniversary, Role role, String name, WorkHours workHours,
+    protected void checkEmployee(LocalDate anniversary, Role role, String name, double workHours,
                                  String supervisor, String department, Employee employee) {
         assertEquals(anniversary, employee.getAnniversary());
         assertEquals(role,employee.getRole());

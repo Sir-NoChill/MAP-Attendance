@@ -2,7 +2,7 @@
     "currentDate": "2022-03-01",
     "employees": [{
         "holidayLeft": 0,
-        "role": "HUMAN_RESOURCES",
+        "role": "HUMAN_RESOURCE",
         "leave": [{
             "comments": "Jerry got eaten by a possum",
             "leaveType": "Sick",

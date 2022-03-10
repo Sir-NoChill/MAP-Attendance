@@ -3,6 +3,9 @@ package model;
 import model.leave.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static model.leave.LeaveType.HOLIDAY;
+import static model.leave.LeaveType.SICK;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -17,11 +20,11 @@ public class LeaveTest {
 
     @BeforeEach
     public void setup() {
-        holiday1 = new Holiday("2023-12-02", "Dildo, NL, Canada");
-        holiday2 = new Holiday(LocalDate.now(),"Obama Junior High School, nagasaki, Japan");
+        holiday1 = new Holiday("2023-12-02", "Dildo, NL, Canada",22);
+        holiday2 = new Holiday(LocalDate.now().toString(),"Obama Junior High School, nagasaki, Japan",27);
 
-        sick1 = new Sick("2022-04-02","Covid-19");
-        sick2 = new Sick(LocalDate.parse("2021-08-11"),"Hit by lightning thrice, went to hospital");
+        sick1 = new Sick("2022-04-02","Covid-19",14);
+        sick2 = new Sick(LocalDate.parse("2021-08-11"),"Hit by lightning thrice, went to hospital",31);
     }
 
     @Test
@@ -64,5 +67,17 @@ public class LeaveTest {
 
         holiday2.setComments("Brian is really, really bad at badminton");
         assertEquals("Brian is really, really bad at badminton",holiday2.getComments());
+    }
+
+    @Test
+    public void testGetLeaveType() {
+        assertEquals(SICK.toString(),sick1.getLeaveType());
+        assertEquals(HOLIDAY.toString(),holiday2.getLeaveType());
+    }
+
+    @Test
+    public void testGetLeaveType2() {
+        assertEquals(HOLIDAY.toString(),holiday2.getLeaveType());
+        assertEquals(SICK.toString(),sick1.getLeaveType());
     }
 }

@@ -3,13 +3,11 @@ package model;
 import exceptions.InvalidLeaveAmountException;
 import exceptions.LeaveNotFoundException;
 import exceptions.RoleNotFoundException;
-import exceptions.WorkHoursNotFoundException;
 import model.leave.Leave;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static model.Employee.stringToRole;
-import static model.Employee.stringToWorkHours;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -17,7 +15,6 @@ import java.time.Period;
 
 import static model.Role.*;
 import static model.leave.LeaveType.*;
-import static model.WorkHours.*;
 
 class EmployeeTest {
     Employee testEmployee1;
@@ -27,10 +24,10 @@ class EmployeeTest {
 
     @BeforeEach
     public void beforeEach() {
-        testEmployee1 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", SIX_HALF, "Jane", "Criminal Law");
-        testEmployee2 = new Employee(LocalDate.now(), HUMAN_RESOURCES, "Harold", SEVEN_HALF, "Kane", "Realty");
-        testEmployee3 = new Employee("2015-08-07",ACCOUNTANT,"Merry",SEVEN,"Bane","Wills");
-        testEmployee4 = new Employee(LocalDate.of(2017,5,13),ACCOUNTANT,"Carol",SIX_HALF,"Vane","Bert");
+        testEmployee1 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", 6.5, "Jane", "Criminal Law");
+        testEmployee2 = new Employee(LocalDate.now(), HUMAN_RESOURCES, "Harold", 7.5, "Kane", "Realty");
+        testEmployee3 = new Employee("2015-08-07",ACCOUNTANT,"Merry",7.0,"Bane","Wills");
+        testEmployee4 = new Employee(LocalDate.of(2017,5,13),ACCOUNTANT,"Carol",6.5,"Vane","Bert");
     }
 
     @Test
@@ -41,7 +38,7 @@ class EmployeeTest {
                 testEmployee1.getAnniversary());
         assertEquals(Period.between(testEmployee1.getAnniversary(),LocalDate.now()).getYears(),
                 testEmployee1.getYearsOfService());
-        assertEquals(SIX_HALF,testEmployee1.getWorkHours());
+        assertEquals(6.5,testEmployee1.getWorkHours());
         assertTrue(testEmployee1.getLeaveTaken().isEmpty());
         assertEquals("Jane",testEmployee1.getSupervisor());
         assertEquals("Criminal Law",testEmployee1.getDepartment());
@@ -56,7 +53,7 @@ class EmployeeTest {
                 testEmployee2.getAnniversary());
         assertEquals(Period.between(testEmployee2.getAnniversary(),LocalDate.now()).getYears(),
                 testEmployee2.getYearsOfService());
-        assertEquals(SEVEN_HALF,testEmployee2.getWorkHours());
+        assertEquals(7.5,testEmployee2.getWorkHours());
         assertTrue(testEmployee2.getLeaveTaken().isEmpty());
         assertEquals("Kane",testEmployee2.getSupervisor());
         assertEquals("Realty",testEmployee2.getDepartment());
@@ -71,7 +68,7 @@ class EmployeeTest {
                 testEmployee3.getAnniversary());
         assertEquals(Period.between(testEmployee3.getAnniversary(),LocalDate.now()).getYears(),
                 testEmployee3.getYearsOfService());
-        assertEquals(SEVEN,testEmployee3.getWorkHours());
+        assertEquals(7,testEmployee3.getWorkHours());
         assertTrue(testEmployee3.getLeaveTaken().isEmpty());
         assertEquals("Bane",testEmployee3.getSupervisor());
         assertEquals("Wills",testEmployee3.getDepartment());
@@ -97,8 +94,8 @@ class EmployeeTest {
 
     @Test
     public void testSetWorkHours() {
-        testEmployee1.setWorkHours(SIX_HALF);
-        assertEquals(SIX_HALF,testEmployee1.getWorkHours());
+        testEmployee1.setWorkHours(6.5);
+        assertEquals(6.5,testEmployee1.getWorkHours());
     }
 
     @Test
@@ -119,7 +116,7 @@ class EmployeeTest {
         testEmployee1.setSickLeaveLeft(2);
 
         try {
-            testEmployee1.takeLeave("2022-08-16", SICK, "Covid-19");
+            testEmployee1.takeLeave("2022-08-16", SICK, "Covid-19",26);
         } catch (InvalidLeaveAmountException e) {
             fail("no exception expected");
         }
@@ -127,7 +124,7 @@ class EmployeeTest {
         assertEquals(1,testEmployee1.getSickLeaveLeft());
 
         try {
-            testEmployee1.takeLeave(LocalDate.now(), HOLIDAY, "keep your cardiologist's number on hand");
+            testEmployee1.takeLeave(LocalDate.now(), HOLIDAY, "keep your cardiologist's number on hand",26);
         } catch (InvalidLeaveAmountException e) {
             fail("no exception expected");
         }
@@ -140,13 +137,13 @@ class EmployeeTest {
         testEmployee1.setHolidayLeft(4);
 
         try {
-            testEmployee1.takeLeave("2020-07-08", HOLIDAY, "Off to commit arson");
+            testEmployee1.takeLeave("2020-07-08", HOLIDAY, "Off to commit arson",26);
         } catch (InvalidLeaveAmountException e) {
             fail("no exception expected");
         }
         assertEquals(3,testEmployee1.getHolidayLeft());
         try {
-            testEmployee1.takeLeave("2020-07-09",HOLIDAY,"Commited some arson, now in jail");
+            testEmployee1.takeLeave("2020-07-09",HOLIDAY,"Commited some arson, now in jail",26);
         } catch (InvalidLeaveAmountException e) {
             fail("no exception expected");
         }
@@ -158,13 +155,13 @@ class EmployeeTest {
         testEmployee1.setSickLeaveLeft(4);
 
         try {
-            testEmployee1.takeLeave(LocalDate.now(),SICK,"Ash in lungs from arson");
+            testEmployee1.takeLeave(LocalDate.now(),SICK,"Ash in lungs from arson",26);
         } catch (InvalidLeaveAmountException e) {
             fail("no exception expected");
         }
         assertEquals(3,testEmployee1.getSickLeaveLeft());
         try {
-            testEmployee1.takeLeave("2007-04-03",SICK,"Got stabbed");
+            testEmployee1.takeLeave("2007-04-03",SICK,"Got stabbed",26);
         } catch (InvalidLeaveAmountException e) {
             fail("no exception expected");
         }
@@ -177,7 +174,46 @@ class EmployeeTest {
         testEmployee1.setSickLeaveLeft(0);
 
         try {
-            testEmployee1.takeLeave("2020-01-01",SICK,"Impaled");
+            testEmployee1.takeLeave("2020-01-01",SICK,"Impaled",26);
+            fail("InvalidLeaveAmountExcetption expected");
+        } catch (InvalidLeaveAmountException e) {
+            //pass
+        }
+    }
+
+    @Test
+    void testTakeLeaveCase4_invalidLeaveAmount_Holiday() {
+        testEmployee1.setHolidayLeft(0);
+        testEmployee1.setSickLeaveLeft(0);
+
+        try {
+            testEmployee1.takeLeave("2020-01-01",HOLIDAY,"Commiting Arson",26);
+            fail("InvalidLeaveAmountExcetption expected");
+        } catch (InvalidLeaveAmountException e) {
+            //pass
+        }
+    }
+
+    @Test
+    void testTakeLeaveCase4_invalidLeaveAmount_Sick_Date() {
+        testEmployee1.setHolidayLeft(0);
+        testEmployee1.setSickLeaveLeft(0);
+
+        try {
+            testEmployee1.takeLeave(LocalDate.parse("2020-01-01"),SICK,"Impaled",26);
+            fail("InvalidLeaveAmountExcetption expected");
+        } catch (InvalidLeaveAmountException e) {
+            //pass
+        }
+    }
+
+    @Test
+    void testTakeLeaveCase4_invalidLeaveAmount_Holiday_Date() {
+        testEmployee1.setHolidayLeft(0);
+        testEmployee1.setSickLeaveLeft(0);
+
+        try {
+            testEmployee1.takeLeave(LocalDate.parse("2020-01-01"),HOLIDAY,"Commiting Arson",26);
             fail("InvalidLeaveAmountExcetption expected");
         } catch (InvalidLeaveAmountException e) {
             //pass
@@ -356,11 +392,11 @@ class EmployeeTest {
         testEmployee1.setSickLeaveLeft(50);
         testEmployee1.setHolidayLeft(50);
 
-        testEmployee1.takeLeave("2020-07-08", HOLIDAY, "Off to commit arson");
-        testEmployee1.takeLeave("2020-07-09",HOLIDAY,"Commited some arson, now in jail");
+        testEmployee1.takeLeave("2020-07-08", HOLIDAY, "Off to commit arson",26);
+        testEmployee1.takeLeave("2020-07-09",HOLIDAY,"Commited some arson, now in jail",26);
 
-        testEmployee1.takeLeave(LocalDate.now(),SICK,"Ash in lungs from arson");
-        testEmployee1.takeLeave("2007-04-03",SICK,"Got stabbed");
+        testEmployee1.takeLeave(LocalDate.now(),SICK,"Ash in lungs from arson",26);
+        testEmployee1.takeLeave("2007-04-03",SICK,"Got stabbed",26);
 
         Leave searchResult;
         try {
@@ -375,6 +411,26 @@ class EmployeeTest {
         Leave searchResult;
         try {
             searchResult = testEmployee2.searchLeave("2020-07-08");
+        } catch (LeaveNotFoundException e) {
+            //pass
+        }
+    }
+
+    @Test
+    public void testSearchLeaveCase3() throws InvalidLeaveAmountException {
+        testEmployee1.setSickLeaveLeft(50);
+        testEmployee1.setHolidayLeft(50);
+
+        testEmployee1.takeLeave("2020-07-08", HOLIDAY, "Off to commit arson",26);
+        testEmployee1.takeLeave("2020-07-09",HOLIDAY,"Commited some arson, now in jail",26);
+
+        testEmployee1.takeLeave(LocalDate.now(),SICK,"Ash in lungs from arson",26);
+        testEmployee1.takeLeave("2007-04-03",SICK,"Got stabbed",26);
+
+        Leave searchResult;
+        try {
+            searchResult = testEmployee1.searchLeave("2020-06-08");
+            fail("Exception expected");
         } catch (LeaveNotFoundException e) {
             //pass
         }
@@ -414,46 +470,6 @@ class EmployeeTest {
             assertNull(stringToRole("silly goose"));
             fail("RoleNotFoundException expected");
         } catch (RoleNotFoundException e) {
-            //pass
-        }
-    }
-
-    @Test
-    void testStringToWorkHours_SIX_HALF() {
-        try {
-            assertEquals(SIX_HALF,stringToWorkHours("six_half"));
-            assertEquals(SIX_HALF,stringToWorkHours("6.5"));
-        } catch (WorkHoursNotFoundException e) {
-            fail("No exception expected");
-        }
-    }
-
-    @Test
-    void testStringToWorkHours_SEVEN() {
-        try {
-            assertEquals(SEVEN,stringToWorkHours("seven"));
-            assertEquals(SEVEN,stringToWorkHours("7"));
-        } catch (WorkHoursNotFoundException e) {
-            fail("No exception expected");
-        }
-    }
-
-    @Test
-    void testStringToWorkHours_SEVEN_HALF() {
-        try {
-            assertEquals(SEVEN_HALF,stringToWorkHours("7.5"));
-            assertEquals(SEVEN_HALF,stringToWorkHours("seven_half"));
-        } catch (WorkHoursNotFoundException e) {
-            fail("No exception expected");
-        }
-    }
-
-    @Test
-    void testStringToWorkHours_Null() {
-        try {
-            assertNull(stringToWorkHours("eeee"));
-            fail("WorkHoursNotFoundException expected");
-        } catch (WorkHoursNotFoundException e) {
             //pass
         }
     }

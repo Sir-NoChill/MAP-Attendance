@@ -9,11 +9,9 @@ import java.util.stream.Stream;
 
 import exceptions.FileLoadError;
 import exceptions.RoleNotFoundException;
-import exceptions.WorkHoursNotFoundException;
 import model.Employee;
 import model.Role;
 import model.State;
-import model.WorkHours;
 import model.leave.LeaveType;
 import org.json.*;
 
@@ -28,7 +26,7 @@ public class JsonReader {
     }
 
     //EFFECTS: Reads a state from a JSON file
-    public State read() throws IOException {
+    public State read() throws IOException, FileLoadError {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
         return parseState(jsonObject);
@@ -46,7 +44,7 @@ public class JsonReader {
     }
 
     //EFFECTS: parses a JSON file into a state
-    private State parseState(JSONObject jsonObject) {
+    private State parseState(JSONObject jsonObject) throws FileLoadError {
         String date = jsonObject.getString("currentDate");
         State s = new State(date);
         addEmployees(s, jsonObject);
@@ -54,7 +52,7 @@ public class JsonReader {
     }
 
     //EFFECTS: Adds all employees from JSON Array to a state when loaded form a file
-    private void addEmployees(State state, JSONObject jsonObject) {
+    private void addEmployees(State state, JSONObject jsonObject) throws FileLoadError {
         JSONArray jsonArray = jsonObject.getJSONArray("employees");
         for (Object json : jsonArray) {
             JSONObject nextEmployee = (JSONObject) json;
@@ -63,13 +61,12 @@ public class JsonReader {
     }
 
     //EFFECTS: Adds an employee to a state when loaded from JSON file
-    private void addEmployee(State state, JSONObject jsonObject) {
+    private void addEmployee(State state, JSONObject jsonObject) throws FileLoadError {
         String name = jsonObject.getString("name");
         String supervisor = jsonObject.getString("supervisor");
         String department = jsonObject.getString("department");
 
         String role = jsonObject.getString("role");
-        String workHours = jsonObject.getString("workHours");
 
         String anniversary = jsonObject.getString("anniversary");
 
@@ -77,16 +74,16 @@ public class JsonReader {
 
         double sickLeaveLeft = jsonObject.getDouble("sickLeaveLeft");
 
+        double workHours = jsonObject.getDouble("workHours");
+
         Role role1;
-        WorkHours workHours1;
         try {
             role1 = Employee.stringToRole(role.toLowerCase());
-            workHours1 = Employee.stringToWorkHours(workHours.toLowerCase());
-        } catch (RoleNotFoundException | WorkHoursNotFoundException e) {
+        } catch (RoleNotFoundException e) {
             throw new FileLoadError();
         }
 
-        Employee e = new Employee(anniversary, role1, name, workHours1, supervisor, department);
+        Employee e = new Employee(anniversary, role1, name, workHours, supervisor, department);
         e.setHolidayLeft(holidayLeft);
         e.setSickLeaveLeft(sickLeaveLeft);
         addLeaves(e, jsonObject);
@@ -106,11 +103,12 @@ public class JsonReader {
     private void addLeave(Employee employee, JSONObject jsonObject) {
         String date = jsonObject.getString("leaveDate");
         String comments = jsonObject.getString("comments");
+        double timeSegments = jsonObject.getDouble("timeSegments");
 
         if (Objects.equals(jsonObject.getString("leaveType"), "Sick")) {
-            employee.addLeaveToEmployee(date, LeaveType.SICK,comments);
+            employee.addLeaveToEmployee(date, LeaveType.SICK,comments,timeSegments);
         } else {
-            employee.addLeaveToEmployee(date, LeaveType.HOLIDAY,comments);
+            employee.addLeaveToEmployee(date, LeaveType.HOLIDAY,comments,timeSegments);
         }
 
     }
