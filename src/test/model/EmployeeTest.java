@@ -221,45 +221,6 @@ class EmployeeTest {
     }
 
     @Test
-    void testTakeLeaveCase4_invalidLeaveAmount_Holiday() {
-        testEmployee1.setHolidayLeft(0);
-        testEmployee1.setSickLeaveLeft(0);
-
-        try {
-            testEmployee1.takeLeave("2020-01-01",HOLIDAY,"Commiting Arson");
-            fail("InvalidLeaveAmountExcetption expected");
-        } catch (InvalidLeaveAmountException e) {
-            //pass
-        }
-    }
-
-    @Test
-    void testTakeLeaveCase4_invalidLeaveAmount_Sick_Date() {
-        testEmployee1.setHolidayLeft(0);
-        testEmployee1.setSickLeaveLeft(0);
-
-        try {
-            testEmployee1.takeLeave(LocalDate.parse("2020-01-01"),SICK,"Impaled");
-            fail("InvalidLeaveAmountExcetption expected");
-        } catch (InvalidLeaveAmountException e) {
-            //pass
-        }
-    }
-
-    @Test
-    void testTakeLeaveCase4_invalidLeaveAmount_Holiday_Date() {
-        testEmployee1.setHolidayLeft(0);
-        testEmployee1.setSickLeaveLeft(0);
-
-        try {
-            testEmployee1.takeLeave(LocalDate.parse("2020-01-01"),HOLIDAY,"Commiting Arson");
-            fail("InvalidLeaveAmountExcetption expected");
-        } catch (InvalidLeaveAmountException e) {
-            //pass
-        }
-    }
-
-    @Test
     public void testAccrueVacation() {
         testEmployee1.setHolidayAccrual(6);
         testEmployee1.accrueHoliday();
