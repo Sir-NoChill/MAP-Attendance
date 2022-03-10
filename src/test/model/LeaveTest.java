@@ -3,6 +3,9 @@ package model;
 import model.leave.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static model.leave.LeaveType.HOLIDAY;
+import static model.leave.LeaveType.SICK;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -64,5 +67,11 @@ public class LeaveTest {
 
         holiday2.setComments("Brian is really, really bad at badminton");
         assertEquals("Brian is really, really bad at badminton",holiday2.getComments());
+    }
+
+    @Test
+    public void testGetLeaveType() {
+        assertEquals(SICK.toString(),sick1.getLeaveType());
+        assertEquals(HOLIDAY.toString(),holiday2.getLeaveType());
     }
 }
