@@ -205,7 +205,7 @@ public class Employee implements Writable {
                 return leave;
             }
         }
-        return null;
+        throw new LeaveNotFoundException();
     }
 
     public static Role stringToRole(String s) throws RoleNotFoundException {
