@@ -32,6 +32,9 @@ public class Employee implements Writable {
     private double sickLeaveLeft;    //Sick leave left at any temporal state
     private final double sickLeaveAccrual = 6; //Sick leave accrued per month
 
+    //EFFECTS: creates a new employee object which has assigned values and
+    //         sets years of service based on anniversary
+    //         sets holiday accrual based on years of service
     public Employee(LocalDate anniversary, Role role, String name, double workHours,
                     String supervisor, String department) {
         this.anniversary = anniversary;
@@ -48,6 +51,7 @@ public class Employee implements Writable {
         autoSetHolidayAccrualRate();
     }
 
+    //Overload of constructor to accept date
     public Employee(String anniversary, Role role, String name, double workHours,
                     String supervisor, String department) {
         this.anniversary = LocalDate.parse(anniversary);
@@ -110,10 +114,12 @@ public class Employee implements Writable {
         this.leaveTaken.add(leave);
     }
 
+    //EFFECTS: subtracts sick leave from employee sick leave left based on 15 minute increments
     public void subtractSickLeave(double timeSegments) {
         this.sickLeaveLeft -= timeSegments / (workHours * 4);
     }
 
+    //EFFECTS: subtracts holiday leave from employee sick leave left based on 15 minute increments
     public void subtractHolidayLeave(double timeSegments) {
         this.holidayLeft -= timeSegments / (workHours * 4);
     }
@@ -207,6 +213,7 @@ public class Employee implements Writable {
         throw new LeaveNotFoundException();
     }
 
+    //EFFECTS: parses a string to a role
     public static Role stringToRole(String s) throws RoleNotFoundException {
         s = s.toLowerCase();
         switch (s) {
@@ -224,6 +231,7 @@ public class Employee implements Writable {
         }
     }
 
+    //EFFECTS: converts an employee object to a JSON object
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
@@ -239,6 +247,7 @@ public class Employee implements Writable {
         return json;
     }
 
+    //EFFECTS: converts the list of leave to a JSON array
     private JSONArray leaveToJsonArray() {
         JSONArray json = new JSONArray();
         for (Leave l : this.leaveTaken) {

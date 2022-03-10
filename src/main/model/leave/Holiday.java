@@ -18,12 +18,14 @@ public class Holiday implements Leave, Writable {
         this.timeSegments = timeSegments;
     }
 
+    //Overload of method to accept strings of dates
     public Holiday(String dateOfLeave, String comments,double timeSegments) {
         this.dateOfLeave = LocalDate.parse(dateOfLeave);
         this.comments = comments;
         this.timeSegments = timeSegments;
     }
 
+    //EFFECTS: converts leave to Json format
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("leaveDate",dateOfLeave);

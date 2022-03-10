@@ -47,7 +47,6 @@ public class State {
     }
 
     //REQUIRES: initial state exist
-    //          and be distinct from attempted update
     //MODIFIES: this
     //EFFECTS: changes the current date of the state
     //         updates employees holiday

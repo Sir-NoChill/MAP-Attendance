@@ -17,12 +17,14 @@ public class Sick implements Leave {
         this.timeSegments = timeSegments;
     }
 
+    //Overload of the method to accept date strings
     public Sick(String dateOfLeave, String comments, double timeSegments) {
         this.dateOfLeave = LocalDate.parse(dateOfLeave);
         this.comments = comments;
         this.timeSegments = timeSegments;
     }
 
+    //EFFECTS: converts leave to Json format
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("leaveDate",dateOfLeave);
@@ -33,7 +35,7 @@ public class Sick implements Leave {
         return json;
     }
 
-
+    // Method to display leave for ui
     public String displayLeave() {
         return this.dateOfLeave.toString() + " " + this.comments;
     }

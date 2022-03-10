@@ -24,6 +24,7 @@ public class UI {
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
 
+    //EFFECTS: creates a new UI object that processes operations from user input
     public UI() throws FileNotFoundException {
         this.state = new State(LocalDate.now());
         this.jsonReader = new JsonReader(JSON_STORE);
