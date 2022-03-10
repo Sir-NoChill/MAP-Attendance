@@ -3,7 +3,6 @@ package model;
 import exceptions.InvalidLeaveAmountException;
 import exceptions.LeaveNotFoundException;
 import exceptions.RoleNotFoundException;
-import exceptions.WorkHoursNotFoundException;
 import model.leave.Holiday;
 import model.leave.Leave;
 import model.leave.LeaveType;

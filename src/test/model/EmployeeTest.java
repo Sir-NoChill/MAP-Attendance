@@ -3,7 +3,6 @@ package model;
 import exceptions.InvalidLeaveAmountException;
 import exceptions.LeaveNotFoundException;
 import exceptions.RoleNotFoundException;
-import exceptions.WorkHoursNotFoundException;
 import model.leave.Leave;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
