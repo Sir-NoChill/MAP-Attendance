@@ -1,0 +1,26 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="MAP-attendance v0.01">
+    <output-path>$PROJECT_DIR$/out/artifacts/MAP_attendance_v0_01</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="" />
+        <option name="description" value="Medium size business HR Software" />
+        <option name="height" value="1000" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="nativeBundle" value="exe" />
+        <option name="title" value="MAP Attendance" />
+        <option name="vendor" value="Ayrton Chilibeck" />
+        <option name="version" value="0.01" />
+        <option name="width" value="1000" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="Project_Starter.jar">
+        <element id="module-output" name="Project-Starter" />
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

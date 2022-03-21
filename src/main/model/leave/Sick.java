@@ -1,11 +1,12 @@
 package model.leave;
 
 import org.json.JSONObject;
+import persistance.Writable;
 
 import java.time.LocalDate;
 
 // Represents sick leave
-public class Sick implements Leave {
+public class Sick implements Leave, Writable {
 
     LocalDate dateOfLeave;
     String comments;

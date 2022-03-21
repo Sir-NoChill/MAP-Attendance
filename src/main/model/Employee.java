@@ -96,22 +96,25 @@ public class Employee implements Writable {
     //EFFECTS:  appends an instance of Leave to leaveTaken
     public void takeLeave(String date, LeaveType leaveType, String comment, double timeSegments)
             throws InvalidLeaveAmountException {
-        Leave leave;
+        Leave leave = null;
         LocalDate date1 = LocalDate.parse(date);
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date1, comment,timeSegments);
-            this.subtractSickLeave(timeSegments);
-            if (sickLeaveLeft < 0) {
+            if ((this.getSickLeaveLeft() - timeSegments / (workHours * 4)) < 0) {
                 throw new InvalidLeaveAmountException();
+            } else {
+                this.subtractSickLeave(timeSegments);
+                this.leaveTaken.add(leave);
             }
-        } else {
-            leave = new Holiday(date1, comment,timeSegments);
-            this.subtractHolidayLeave(timeSegments);
-            if (holidayLeft < 0) {
+        } else if (leaveType == LeaveType.HOLIDAY) {
+            leave = new Holiday(date1, comment,timeSegments); //IDEAS find a way to delete this if the leave is invalid
+            if ((this.getHolidayLeft() - timeSegments / (workHours * 4)) < 0) {
                 throw new InvalidLeaveAmountException();
+            } else {
+                this.subtractHolidayLeave(timeSegments);
+                this.leaveTaken.add(leave);
             }
         }
-        this.leaveTaken.add(leave);
     }
 
     //EFFECTS: subtracts sick leave from employee sick leave left based on 15 minute increments
