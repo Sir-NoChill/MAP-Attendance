@@ -112,9 +112,7 @@ public class GUI extends JPanel
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
 
-    Employee testEmployee = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", 6.5, "Jane", "Criminal Law");
-
-
+    //EFFECTS: Generates a GUI
     public GUI() {
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -149,6 +147,7 @@ public class GUI extends JPanel
         setMinimumSize(new Dimension(1000,1000));
     }
 
+    //EFFECTS Places the Right hand option pane in the GUI
     private void placeOptionsPanes(GridBagConstraints c) { //IDEAS make this more general and replace
                                                            // GUI building with it
         //OptionsPane
@@ -159,6 +158,7 @@ public class GUI extends JPanel
         c.fill = VERTICAL;
     }
 
+    //EFFECTS: creates the menu bar
     private JMenuBar generateMenuBar() {
         menuBar = new JMenuBar();
 
@@ -168,6 +168,7 @@ public class GUI extends JPanel
         return menuBar;
     }
 
+    //EFFECTS; generates the "file" menu item
     private JMenu generateFileMenu() {
         fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
@@ -178,6 +179,7 @@ public class GUI extends JPanel
         return fileMenu;
     }
 
+    //EFFECTS: generates the "info" menu item
     private JMenu generateInfoMenu() {
         info = new JMenu("Info");
         info.setMnemonic(KeyEvent.VK_I);
@@ -186,12 +188,14 @@ public class GUI extends JPanel
         return info;
     }
 
+    //EFFECTS: Generates the save tab in the file menu
     private JMenuItem generateSaveMenuItem() {
         save = new JMenuItem("Save");
 
         return save;
     }
 
+    //EFFECTS: generate the load tab in the file menu
     private JMenuItem generateLoadMenuItem() {
         load = new JMenuItem("Load");
         load.addActionListener(this);
@@ -200,6 +204,7 @@ public class GUI extends JPanel
         return load;
     }
 
+    //EFFECTS adds the credit item to the info menu
     private JMenuItem generateCreditMenuItem() {
         credits = new JMenuItem("Credits");
         credits.addActionListener(this);
@@ -208,6 +213,7 @@ public class GUI extends JPanel
         return credits;
     }
 
+    //EFFECTS: generates the employee list scroll pane on the right side of the GUI
     private JScrollPane generateEmployeeListScrollPane() {
         //creating list of employees
         listModelEmployees = new DefaultListModel();
@@ -228,18 +234,25 @@ public class GUI extends JPanel
         return employeeListScrollPane;
     }
 
+    //MODIFIES: this.listModelEmployees
+    //EFFECTS: clears and refills the list of employees
+    //         for visibility of new employees and avoiding duplocates
     private void refreshEmployeeListView() {
         listModelEmployees.removeAllElements();
         populateEmployeeListModel();
         employees.setModel(listModelEmployees);
     }
 
+    //MODIFIES: this.listmodelLeave
+    //EFFECTS: clears and refills the list of Leave
+    //         for visibility of new leave and avoiding duplication
     private void refreshLeaveListView() {
         listModelLeave.removeAllElements();
         populateLeaveListModel();
         leave.setModel(listModelLeave);
     }
 
+    //EFFECTS: creates the employee info  frame that sits below the employee list
     private JPanel generateEmployeeInfoFrame() {
         if (employeeSelectedBool()) {
             Employee selectedEmployee = getSelectedEmployee();
@@ -263,6 +276,7 @@ public class GUI extends JPanel
         return employeeInfoFrame;
     }
 
+    //EFFECTS: generates the employee options pane
     private JTabbedPane generateOptionsPanes() {
         optionsPanes = new JTabbedPane();
 
@@ -279,6 +293,7 @@ public class GUI extends JPanel
         return optionsPanes;
     }
 
+    //effects: generates the leaveView pane that sits inside the tabbed pane
     private JPanel generateLeaveViewPane() {
         leaveViewPane = new JPanel();
         leaveViewPane.setLayout(new GridBagLayout());
@@ -299,6 +314,7 @@ public class GUI extends JPanel
         return leaveViewPane;
     }
 
+    //effects: creates the employee creation pane
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private JPanel generateEmployeeCreationPane() {
         employeeCreationPane = new JPanel();
@@ -352,6 +368,7 @@ public class GUI extends JPanel
         return employeeCreationPane;
     }
 
+    //effects: generates the edit employee panes
     private JPanel generateEditEmployeePane() {
         editEmployeePane = new JPanel();
         editEmployeePane.setLayout(new GridLayout(EDIT_EMPLOYEE_PANE_ROWS,EDIT_EMPLOYEE_PANE_COLUMNS));
@@ -376,6 +393,7 @@ public class GUI extends JPanel
         return editEmployeePane;
     }
 
+    //EFFECTS: generates the leave list in the leaveView Scroll pane
     private JScrollPane generateLeaveListScrollPane() {
         listModelLeave = new DefaultListModel();
         populateLeaveListModel();
@@ -393,6 +411,7 @@ public class GUI extends JPanel
         return leaveListScrollPane;
     }
 
+    //EFFECTS: generates the leave creation frame that sits in the leave view pane
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private JPanel generateLeaveCreationPane() { //IDEAS use teh place method (like for GUI) and refactor
         JLabel leaveDateLabel = new JLabel("Date:");
@@ -437,6 +456,7 @@ public class GUI extends JPanel
         return leaveCreationPane;
     }
 
+    //EFFECTS: generates the leave type combo bos insid the leave creation pane
     private JComboBox<String> generateLeaveTypeComboBox() {
         String[] leaveTypeStrings = { "Select Type", "Holiday", "Sick" };
         leaveTypeBox = new JComboBox<>(leaveTypeStrings);
@@ -444,16 +464,21 @@ public class GUI extends JPanel
         return leaveTypeBox;
     }
 
+    //EFFECTS generates the leave date field that sits in the Leave Creation pane
+    //IDEAS should be changed to a java date picker
     private JTextField generateLeaveDateTextField() {
         leaveDateTextField = new JTextField(10); //text obtained by getText() (returns String)
         return leaveDateTextField;
     }
 
+    //EFFECTS generates the comments field that sits inside the leave view editor
     private JTextField generateLeaveCommentsTextField() {
         leaveCommentsTextField = new JTextField(10);
         return leaveCommentsTextField;
     }
 
+    //EFFECTS: generates the select employee button at the top of the program.
+    //IDEAS: should be switched witha dynamically changing selection listener on the list
     private JButton generateSelectEmployeeButton() {
         selectEmployeeButton = new JButton(SELECT_EMPLOYEE);
         selectEmployeeButton.setVerticalTextPosition(AbstractButton.CENTER);
@@ -466,6 +491,7 @@ public class GUI extends JPanel
         return selectEmployeeButton;
     }
 
+    //EFFECTS: generates the leaveCreate button in the leave view pane
     private JButton generateCreateLeaveButton() {
         createLeaveButton = new JButton(CREATE_LEAVE);
         createLeaveButton.setVerticalTextPosition(AbstractButton.CENTER);
@@ -478,6 +504,7 @@ public class GUI extends JPanel
         return createLeaveButton;
     }
 
+    //EFFECTS: generates the create employee button in the employeecreation pane
     private JButton generateCreateEmployeeButton() {
         createEmployeeButton = new JButton(CREATE_EMPLOYEE);
         createEmployeeButton.setVerticalTextPosition(AbstractButton.CENTER);
@@ -490,6 +517,7 @@ public class GUI extends JPanel
         return createEmployeeButton;
     }
 
+    //EFFECTS: generates the edit employee button in the edit employee frame
     private JButton generateEditEmployeeButton() {
         editEmployeeButton = new JButton(EDIT_EMPLOYEE);
         editEmployeeButton.setVerticalTextPosition(AbstractButton.CENTER);
@@ -502,6 +530,7 @@ public class GUI extends JPanel
         return editEmployeeButton;
     }
 
+    //EFFECTS: Instantiates the GUI in a frame on the computer screen
     private static void createAndShowGUI() {
         //Create and set up the window.
         frame = new JFrame("MAP - Attendance Program for Mid-Sized Business");
@@ -525,6 +554,7 @@ public class GUI extends JPanel
     }
 
     //Stack Exchange
+    //EFFECTS: rounds a double to a given number of decimal places
     public static double round(double value, int places) {
         if (places < 0) {
             throw new IllegalArgumentException();
@@ -535,6 +565,7 @@ public class GUI extends JPanel
         return bd.doubleValue();
     }
 
+    //EFFECTS: the combination setter method for the information stored in the employeeInformation pane
     private void setEmployeeInformation(Employee selectedEmployee) {
         employeeSickLeave.setText("Remaining Sick Leave: " + round(selectedEmployee.getSickLeaveLeft(),2));
         employeeHolidayLeave.setText("Remaining Holiday: " + round(selectedEmployee.getHolidayLeft(),2));
@@ -545,6 +576,7 @@ public class GUI extends JPanel
         employeeYearsOfService.setText("Years of Service: " + selectedEmployee.getYearsOfService());
     }
 
+    //EFFECTS: the information to be displayed in the absence of a selected employee
     private void setEmployeeInformationDefault() {
         employeeSickLeave.setText("Remaining Sick Leave: None");
         employeeHolidayLeave.setText("Remaining Holiday: None");
@@ -555,6 +587,8 @@ public class GUI extends JPanel
         employeeYearsOfService.setText("Years of Service: None");
     }
 
+    //MODIFIES: this.leaveListModel
+    //EFFECTS: iterates through the leave in an employee and populates
     private void populateLeaveListModel() {
         boolean selected = employeeSelectedBool();
         if (selected) {
@@ -567,17 +601,22 @@ public class GUI extends JPanel
         }
     }
 
+    //MODIFIES: this.employeeListModel
+    //EFFECTS: iterates through the employees in this.state and populates the employeeListModel with them
     private void populateEmployeeListModel() {
         for (Employee e : state.getSetOfEmployees()) {
             listModelEmployees.addElement(e.getName());
         }
     }
 
+    //PROGRAM ENTRY POINT
+    //EFFECTS: entry point for the code
     public static void main(String[] args) {
 
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
+    //EFFECTS: clears all text fields in the program
     private void clearFields() {
         employeeNameField.setText("");
         employeeAnniversaryField.setText("");
@@ -588,12 +627,14 @@ public class GUI extends JPanel
         leaveCommentsTextField.setText("");
     }
 
+    //EFFECTS: nothing right now, to be updated
     @Override
     public void valueChanged(ListSelectionEvent e) {
 
 
     }
 
+    //EFFECTS: Master method for button effects
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -627,6 +668,8 @@ public class GUI extends JPanel
         }
     }
 
+    //MODIFIES: this.state
+    //EFFECTS: adds a new employee based on user input in "employeeXxxx" textFields
     private void createEmployeeGUI() {
         try {
             Employee newEmployee = new Employee(
@@ -646,6 +689,8 @@ public class GUI extends JPanel
         refreshEmployeeListView();
     }
 
+    //MODIFIES: this.state
+    //EFFECTS: edits the selected employee with user input
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private void editEmployeeGUI() {
         if (employeeSelectedBool()) {
@@ -684,6 +729,8 @@ public class GUI extends JPanel
         }
     }
 
+    //MODIFIES: this.state
+    //EFFECTS: changes the role of an employee in the state
     private void changeRoleGUI(String s, Employee em) {
         try {
             em.setRole(stringToRole(s));
@@ -694,6 +741,8 @@ public class GUI extends JPanel
         }
     }
 
+    //MODIFIES: an employee in this.state
+    //EFFECTS: creates an instance of leave in a given employee
     private void createLeaveGUI() {
         if (employeeSelectedBool()) {
             LeaveType l;
@@ -719,6 +768,7 @@ public class GUI extends JPanel
         }
     }
 
+    //EFFECTS: returns the type of leave based on the leave type combo box
     private LeaveType getLeaveType() {
         LeaveType l;
         if (leaveTypeBox.getSelectedItem().toString().equals("Holiday")) {
@@ -731,6 +781,8 @@ public class GUI extends JPanel
         return l;
     }
 
+    //MODIFIES: an employee in this.state
+    //EFFECTS: same functionalit as regularLeaveTakingGUI, except overrides the invalid leave amount exception
     private void overrideLeaveTakingGUI(LeaveType l, String leaveDate, String leaveComments) {
         getSelectedEmployee().addLeaveToEmployee(
                 leaveDate,
@@ -741,6 +793,8 @@ public class GUI extends JPanel
         JOptionPane.showMessageDialog(GUI.this, "Leave Added");
     }
 
+    //MODIFIES: an employee in this.state
+    //EFFECTS: creates an instance of leave for an employee in the state
     private void regularLeaveTakingGUI(LeaveType l, String leaveDate, String leaveComments)
             throws InvalidLeaveAmountException {
         getSelectedEmployee().takeLeave(
@@ -752,6 +806,8 @@ public class GUI extends JPanel
         JOptionPane.showMessageDialog(GUI.this, "Leave Added");
     }
 
+    //MODIFIES: this
+    //EFFECTS: loads a state from a file
     private void loadFileGUI() {
         int returnValLoad = fileChooser.showOpenDialog(GUI.this);
 
@@ -774,6 +830,7 @@ public class GUI extends JPanel
         }
     }
 
+    //EFFECTS: saves a state to file
     private void saveFileGUI() {
         int returnValSave = fileChooser.showSaveDialog(GUI.this);
 
@@ -786,15 +843,12 @@ public class GUI extends JPanel
         }
     }
 
-    private void leaveScrollPaneRefresh() {
-        leaveListScrollPane.removeAll();
-        populateLeaveListModel();
-    }
-
+    //EFFECTS: returns if an employee is selected
     private boolean employeeSelectedBool() {
         return employees.getSelectedValue() != null;
     }
 
+    //EFFECTS: returns the selected employee
     private Employee getSelectedEmployee() {
         try {
             return state.searchEmployees(employees.getSelectedValue().toString());
@@ -803,6 +857,7 @@ public class GUI extends JPanel
         }
     }
 
+    //EFFECTS: displays the program credits in the info pane
     private void displayCreditsGUI() {
         String message = "Created by Ayrton Chilibeck, for my wonderful mother "
                 + "who serves as an inspiration for my work and person.";
