@@ -7,14 +7,16 @@ import model.Employee;
 import model.State;
 import model.leave.Leave;
 import model.leave.LeaveType;
+import persistance.JsonReader;
+import persistance.JsonWriter;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -23,7 +25,6 @@ import java.util.Objects;
 
 import static java.awt.GridBagConstraints.BOTH;
 import static java.lang.Double.parseDouble;
-import static java.lang.Math.round;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 import static javax.swing.SwingConstants.HORIZONTAL;
 import static javax.swing.SwingConstants.VERTICAL;
@@ -34,8 +35,6 @@ public class GUI extends JPanel
         implements
         ListSelectionListener,
         ActionListener {
-
-    public Employee testEmployee1 = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", 6.5, "Jane", "Criminal Law");
 
     private State state = new State(LocalDate.now());
 
@@ -95,11 +94,22 @@ public class GUI extends JPanel
     JLabel employeeSupervisor = new JLabel();
     JLabel employeeDepartment = new JLabel();
 
+    //MENU BAR BUILDING
+    private ItemListener itemListener;
+    private JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenuItem save;
+    private JMenuItem load;
+
+    //File loading and Saving system
+    private final JFileChooser fileChooser;
+    private JsonReader jsonReader;
+    private JsonWriter jsonWriter;
+
     Employee testEmployee = new Employee("2002-07-08", LEGAL_ASSISTANT, "Jerry", 6.5, "Jane", "Criminal Law");
 
 
     public GUI() {
-        state.addEmployee(testEmployee1);
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
@@ -125,15 +135,54 @@ public class GUI extends JPanel
         c.fill = HORIZONTAL;
         add(generateEmployeeInfoFrame(),c);
 
+        placeOptionsPanes(c);
+        add(generateOptionsPanes(),c);
+
+        fileChooser = new JFileChooser();
+
+        setMinimumSize(new Dimension(1000,1000));
+    }
+
+    private void placeOptionsPanes(GridBagConstraints c) { //IDEAS make this more general and replace
+                                                           // GUI building with it
         //OptionsPane
         c.gridwidth = 1;
         c.gridheight = 11;
         c.gridx = 2;
         c.gridy = 0;
         c.fill = VERTICAL;
-        add(generateOptionsPanes(),c);
+    }
 
-        setMinimumSize(new Dimension(1000,1000));
+    private JMenuBar generateMenuBar() {
+        menuBar = new JMenuBar();
+
+        menuBar.add(generateFileMenu());
+
+        return menuBar;
+    }
+
+    private JMenu generateFileMenu() {
+        fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+
+        fileMenu.add(generateSaveMenuItem());
+        fileMenu.add(generateLoadMenuItem());
+
+        return fileMenu;
+    }
+
+    private JMenuItem generateSaveMenuItem() {
+        save = new JMenuItem("Save");
+
+        return save;
+    }
+
+    private JMenuItem generateLoadMenuItem() {
+        load = new JMenuItem("Load");
+        load.addActionListener(this);
+        load.setActionCommand("load");
+
+        return load;
     }
 
     private JScrollPane generateEmployeeListScrollPane() {
@@ -227,6 +276,7 @@ public class GUI extends JPanel
         return leaveViewPane;
     }
 
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private JPanel generateEmployeeCreationPane() {
         employeeCreationPane = new JPanel();
         employeeCreationPane.setLayout(new GridLayout(CREATE_EMPLOYEE_PANE_ROWS,CREATE_EMPLOYEE_PANE_COLUMNS));
@@ -283,7 +333,8 @@ public class GUI extends JPanel
         editEmployeePane = new JPanel();
         editEmployeePane.setLayout(new GridLayout(EDIT_EMPLOYEE_PANE_ROWS,EDIT_EMPLOYEE_PANE_COLUMNS));
 
-        String[] fields = { "Name", "Anniversary", "Role", "Supervisor", "Department", "Holiday Left", "Sick Leave Left" };
+        String[] fields = { "Name", "Anniversary", "Role", "Supervisor",
+                "Department", "Holiday Left", "Sick Leave Left" };
         employeeFieldChosen = new JComboBox<>(fields);
         employeeFieldChosen.setToolTipText("Select field to edit");
         editEmployeePane.add(employeeFieldChosen);
@@ -319,7 +370,8 @@ public class GUI extends JPanel
         return leaveListScrollPane;
     }
 
-    private JPanel generateLeaveCreationPane() {
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
+    private JPanel generateLeaveCreationPane() { //IDEAS use teh place method (like for GUI) and refactor
         JLabel leaveDateLabel = new JLabel("Date:");
         JLabel leaveCommentsLabel = new JLabel("Comments:");
 
@@ -433,13 +485,16 @@ public class GUI extends JPanel
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add Contents
-        JComponent newContentPane = new GUI();
+        GUI newContentPane = new GUI();
         newContentPane.setOpaque(true);
         frame.setContentPane(newContentPane);
 
         frame.setMinimumSize(new Dimension(700,700));
         frame.setMaximumSize(new Dimension(700,700));
         frame.setPreferredSize(new Dimension(700,700));
+
+        //Setting up the menu bar
+        frame.setJMenuBar(newContentPane.generateMenuBar());
 
         //Display the window
         frame.pack();
@@ -516,6 +571,7 @@ public class GUI extends JPanel
 
     }
 
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand().toLowerCase(Locale.ROOT)) {
@@ -524,90 +580,142 @@ public class GUI extends JPanel
                 refreshLeaveListView();
                 break;
             case "create employee":
-                try {
-                    Employee newEmployee = new Employee(
-                            employeeAnniversaryField.getText(),
-                            stringToRole(employeeRoleComboBox.getSelectedItem().toString()),
-                            employeeNameField.getText(),
-                            parseDouble(employeeWorkHoursField.getText()),
-                            employeeSupervisorField.getText(),
-                            employeeDepartmentField.getText());
-                    this.state.addEmployee(newEmployee);
-                    clearFields();
-                } catch (RoleNotFoundException ex) {
-                    System.out.println("Failed to select employee");
-                }
-                refreshEmployeeListView();
+                createEmployeeGUI();
                 break;
             case "edit employee":
-                if (employeeSelectedBool()) {
-                    String s = employeeEditFieldField.getText();
-                    Employee em = getSelectedEmployee();
-                    switch ((String) Objects.requireNonNull(employeeFieldChosen.getSelectedItem())) {
-                        case "Name":
-                            em.setName(s);
-                            break;
-                        case "Anniversary":
-                            em.setAnniversary(s);
-                            break;
-                        case "Role":
-                            try {
-                                em.setRole(stringToRole(s));
-                                break;
-                            } catch (RoleNotFoundException ex) {
-                                // do nothing
-                                break;
-                            }
-                        case "Supervisor":
-                            em.setSupervisor(s);
-                            break;
-                        case "Department":
-                            em.setDepartment(s);
-                            break;
-                        case "Holiday Left":
-                            em.setHolidayLeft(parseDouble(s));
-                            break;
-                        case "Sick Leave Left":
-                            em.setSickLeaveLeft(parseDouble(s));
-                            break;
-                        case "Work Hours":
-                            em.setWorkHours(parseDouble(s));
-                            break;
-                    }
-                    clearFields();
-                    setEmployeeInformation(em);
-                    refreshEmployeeListView();
-                }
+                editEmployeeGUI();
                 break;
-            case "delete employee":
+            case "delete employee": //TODO should be implemented at some point
                 employees.remove(employees.getSelectedIndex());
                 refreshEmployeeListView();
                 break;
             case "create leave":
-                if (employeeSelectedBool()) {
-                    LeaveType l;
-                    String leaveDate = leaveDateTextField.getText();
-                    String leaveComments = leaveCommentsTextField.getText();
-                    if (leaveTypeBox.getSelectedItem().toString().equals("Holiday")) {
-                        l = LeaveType.HOLIDAY;
-                    } else if (leaveTypeBox.getSelectedItem().toString().equals("Sick")) {
-                        l = LeaveType.SICK;
-                    } else {
-                        break;
-                    }
-                    try {
-                        getSelectedEmployee().takeLeave(
-                                leaveDate,
-                                l,
-                                leaveComments,
-                                getSelectedEmployee().getWorkHours() * 4);
-                    } catch (InvalidLeaveAmountException ex) {
-                        // do nothing
-                    }
-                    refreshLeaveListView();
-                }
+                createLeaveGUI();
                 break;
+            case "load":
+                loadFileGUI();
+                break;
+            case "save":
+                saveFileGUI();
+                break;
+        }
+    }
 
+    private void createEmployeeGUI() {
+        try {
+            Employee newEmployee = new Employee(
+                    employeeAnniversaryField.getText(),
+                    stringToRole(employeeRoleComboBox.getSelectedItem().toString()),
+                    employeeNameField.getText(),
+                    parseDouble(employeeWorkHoursField.getText()),
+                    employeeSupervisorField.getText(),
+                    employeeDepartmentField.getText());
+            this.state.addEmployee(newEmployee);
+            clearFields();
+        } catch (RoleNotFoundException ex) {
+            System.out.println("Failed to select employee");
+        }
+        refreshEmployeeListView();
+    }
+
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
+    private void editEmployeeGUI() {
+        if (employeeSelectedBool()) {
+            String s = employeeEditFieldField.getText();
+            Employee em = getSelectedEmployee();
+            switch ((String) Objects.requireNonNull(employeeFieldChosen.getSelectedItem())) {
+                case "Name":
+                    em.setName(s);
+                    break;
+                case "Anniversary":
+                    em.setAnniversary(s);
+                    break;
+                case "Role":
+                    changeRoleGUI(s, em);
+                    break;
+                case "Supervisor":
+                    em.setSupervisor(s);
+                    break;
+                case "Department":
+                    em.setDepartment(s);
+                    break;
+                case "Holiday Left":
+                    em.setHolidayLeft(parseDouble(s));
+                    break;
+                case "Sick Leave Left":
+                    em.setSickLeaveLeft(parseDouble(s));
+                    break;
+                case "Work Hours":
+                    em.setWorkHours(parseDouble(s));
+                    break;
+            }
+            clearFields();
+            setEmployeeInformation(em);
+            refreshEmployeeListView();
+        }
+    }
+
+    private void changeRoleGUI(String s, Employee em) {
+        try {
+            em.setRole(stringToRole(s));
+            return;
+        } catch (RoleNotFoundException ex) {
+            // do nothing
+            return;
+        }
+    }
+
+    private void createLeaveGUI() {
+        if (employeeSelectedBool()) {
+            LeaveType l;
+            String leaveDate = leaveDateTextField.getText();
+            String leaveComments = leaveCommentsTextField.getText();
+            if (leaveTypeBox.getSelectedItem().toString().equals("Holiday")) {
+                l = LeaveType.HOLIDAY;
+            } else if (leaveTypeBox.getSelectedItem().toString().equals("Sick")) {
+                l = LeaveType.SICK;
+            } else {
+                return;
+            }
+            try {
+                getSelectedEmployee().takeLeave(
+                        leaveDate,
+                        l,
+                        leaveComments,
+                        getSelectedEmployee().getWorkHours() * 4);
+            } catch (InvalidLeaveAmountException ex) {
+                // do nothing
+            }
+            refreshLeaveListView();
+        }
+    }
+
+    private void loadFileGUI() {
+        int returnValLoad = fileChooser.showOpenDialog(GUI.this);
+
+        if (returnValLoad == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            jsonReader = new JsonReader(file.getPath());
+            try {
+                this.state = jsonReader.read();
+            } catch (IOException ex) {
+                System.out.println("Unable to read file");
+                ex.printStackTrace();
+            }
+        }
+
+        refreshEmployeeListView();
+        refreshLeaveListView();
+    }
+
+    private void saveFileGUI() {
+        int returnValSave = fileChooser.showSaveDialog(GUI.this);
+
+        if (returnValSave == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            jsonWriter = new JsonWriter(file.getPath());
+
+            jsonWriter.write(this.state);
         }
     }
 
