@@ -16,22 +16,24 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.Objects;
 
 import static java.awt.GridBagConstraints.BOTH;
 import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
 import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 import static javax.swing.SwingConstants.HORIZONTAL;
 import static javax.swing.SwingConstants.VERTICAL;
 import javax.swing.ImageIcon;
 import static model.Employee.stringToRole;
-import static model.Role.LEGAL_ASSISTANT;
 
 public class GUI extends JPanel
         implements
@@ -42,23 +44,15 @@ public class GUI extends JPanel
 
     protected ImageIcon icon = new ImageIcon("components/images/Logovs.png", "logo");
 
-    private JScrollPane employeeListScrollPane;
-    private JScrollPane leaveListScrollPane;
+    private JList<String> employees;
+    private JList<String> leave;
 
-    private JList employees;
-    private JList leave;
-
-    private static JFrame frame;
-
-    private JPanel employeeInfoFrame;
-
-    private JPanel leaveViewPane;
-    private JPanel leaveCreationPane;
     private JComboBox<String> leaveTypeBox;
     private JTextField leaveDateTextField;
     private JTextField leaveCommentsTextField;
+    private JComboBox leaveTimeSegmentsOptions;
+    private JTextField leaveTimeSegmentsNumber;
 
-    private JPanel employeeCreationPane;
     private JTextField employeeNameField;
     private JTextField employeeAnniversaryField;
     private JComboBox<String> employeeRoleComboBox;
@@ -69,18 +63,14 @@ public class GUI extends JPanel
     private static final int CREATE_EMPLOYEE_PANE_ROWS = 20;
     private static final int CREATE_EMPLOYEE_PANE_COLUMNS = 2;
 
-    private JPanel editEmployeePane;
-    private JTextField employeeEditNameField;
     private JComboBox<String> employeeFieldChosen;
     private JTextField employeeEditFieldField;
     protected JButton editEmployeeButton;
     private static final int EDIT_EMPLOYEE_PANE_ROWS = 20;
     private static final int EDIT_EMPLOYEE_PANE_COLUMNS = 2;
 
-    private JTabbedPane optionsPanes;
-
     private DefaultListModel listModelEmployees;
-    private DefaultListModel listModelLeave;
+    private DefaultListModel<String> listModelLeave;
 
     protected JButton createLeaveButton;
     protected JButton selectEmployeeButton;
@@ -98,21 +88,10 @@ public class GUI extends JPanel
     JLabel employeeSupervisor = new JLabel();
     JLabel employeeDepartment = new JLabel();
 
-    //MENU BAR BUILDING
-    private ItemListener itemListener;
-    private JMenuBar menuBar;
-    private JMenu fileMenu;
-    private JMenuItem save;
-    private JMenuItem load;
-    private JMenu info;
-    private JMenuItem credits;
-
     //File loading and Saving system
-    private final JFileChooser fileChooser;
-    private JsonReader jsonReader;
-    private JsonWriter jsonWriter;
 
     //EFFECTS: Generates a GUI
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public GUI() {
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -139,28 +118,22 @@ public class GUI extends JPanel
         c.fill = HORIZONTAL;
         add(generateEmployeeInfoFrame(),c);
 
-        placeOptionsPanes(c);
-        add(generateOptionsPanes(),c);
-
-        fileChooser = new JFileChooser();
-
-        setMinimumSize(new Dimension(1000,1000));
-    }
-
-    //EFFECTS Places the Right hand option pane in the GUI
-    private void placeOptionsPanes(GridBagConstraints c) { //IDEAS make this more general and replace
-                                                           // GUI building with it
         //OptionsPane
         c.gridwidth = 1;
         c.gridheight = 11;
         c.gridx = 2;
         c.gridy = 0;
         c.fill = VERTICAL;
+        add(generateOptionsPanes(),c);
+
+        setMinimumSize(new Dimension(1000,1000));
     }
 
     //EFFECTS: creates the menu bar
     private JMenuBar generateMenuBar() {
-        menuBar = new JMenuBar();
+        //MENU BAR BUILDING
+        //private ItemListener itemListener;
+        JMenuBar menuBar = new JMenuBar();
 
         menuBar.add(generateFileMenu());
         menuBar.add(generateInfoMenu());
@@ -170,7 +143,7 @@ public class GUI extends JPanel
 
     //EFFECTS; generates the "file" menu item
     private JMenu generateFileMenu() {
-        fileMenu = new JMenu("File");
+        JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
         fileMenu.add(generateSaveMenuItem());
@@ -181,7 +154,7 @@ public class GUI extends JPanel
 
     //EFFECTS: generates the "info" menu item
     private JMenu generateInfoMenu() {
-        info = new JMenu("Info");
+        JMenu info = new JMenu("Info");
         info.setMnemonic(KeyEvent.VK_I);
 
         info.add(generateCreditMenuItem());
@@ -190,14 +163,16 @@ public class GUI extends JPanel
 
     //EFFECTS: Generates the save tab in the file menu
     private JMenuItem generateSaveMenuItem() {
-        save = new JMenuItem("Save");
+        JMenuItem save = new JMenuItem("Save");
+        save.addActionListener(this);
+        save.setActionCommand("save");
 
         return save;
     }
 
     //EFFECTS: generate the load tab in the file menu
     private JMenuItem generateLoadMenuItem() {
-        load = new JMenuItem("Load");
+        JMenuItem load = new JMenuItem("Load");
         load.addActionListener(this);
         load.setActionCommand("load");
 
@@ -206,7 +181,7 @@ public class GUI extends JPanel
 
     //EFFECTS adds the credit item to the info menu
     private JMenuItem generateCreditMenuItem() {
-        credits = new JMenuItem("Credits");
+        JMenuItem credits = new JMenuItem("Credits");
         credits.addActionListener(this);
         credits.setActionCommand("Credits");
 
@@ -224,7 +199,7 @@ public class GUI extends JPanel
         employees.setSelectedIndex(0);
         employees.addListSelectionListener(this);
 
-        employeeListScrollPane = new JScrollPane(
+        JScrollPane employeeListScrollPane = new JScrollPane(
                 employees,
                 VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -261,7 +236,7 @@ public class GUI extends JPanel
             setEmployeeInformationDefault();
         }
 
-        employeeInfoFrame = new JPanel();
+        JPanel employeeInfoFrame = new JPanel();
         employeeInfoFrame.setBorder(BorderFactory.createTitledBorder(EMPLOYEE_INFO));
         employeeInfoFrame.setLayout(new GridLayout(0,2));
 
@@ -278,7 +253,7 @@ public class GUI extends JPanel
 
     //EFFECTS: generates the employee options pane
     private JTabbedPane generateOptionsPanes() {
-        optionsPanes = new JTabbedPane();
+        JTabbedPane optionsPanes = new JTabbedPane();
 
         optionsPanes.addTab("Leave Information",generateLeaveViewPane());
         optionsPanes.addTab("Create Employee",generateEmployeeCreationPane());
@@ -295,7 +270,7 @@ public class GUI extends JPanel
 
     //effects: generates the leaveView pane that sits inside the tabbed pane
     private JPanel generateLeaveViewPane() {
-        leaveViewPane = new JPanel();
+        JPanel leaveViewPane = new JPanel();
         leaveViewPane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
@@ -317,7 +292,7 @@ public class GUI extends JPanel
     //effects: creates the employee creation pane
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private JPanel generateEmployeeCreationPane() {
-        employeeCreationPane = new JPanel();
+        JPanel employeeCreationPane = new JPanel();
         employeeCreationPane.setLayout(new GridLayout(CREATE_EMPLOYEE_PANE_ROWS,CREATE_EMPLOYEE_PANE_COLUMNS));
 
         JLabel name = new JLabel("Name:");
@@ -370,7 +345,7 @@ public class GUI extends JPanel
 
     //effects: generates the edit employee panes
     private JPanel generateEditEmployeePane() {
-        editEmployeePane = new JPanel();
+        JPanel editEmployeePane = new JPanel();
         editEmployeePane.setLayout(new GridLayout(EDIT_EMPLOYEE_PANE_ROWS,EDIT_EMPLOYEE_PANE_COLUMNS));
 
         String[] fields = { "Name", "Anniversary", "Role", "Supervisor",
@@ -402,12 +377,12 @@ public class GUI extends JPanel
         leave.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         leave.addListSelectionListener(this);
 
-        leaveListScrollPane = new JScrollPane(
+        JScrollPane leaveListScrollPane = new JScrollPane(
                 leave,
                 VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        leaveListScrollPane.setPreferredSize(new Dimension(200,400));
+        leaveListScrollPane.setPreferredSize(new Dimension(200,200));
         return leaveListScrollPane;
     }
 
@@ -417,7 +392,7 @@ public class GUI extends JPanel
         JLabel leaveDateLabel = new JLabel("Date:");
         JLabel leaveCommentsLabel = new JLabel("Comments:");
 
-        leaveCreationPane = new JPanel();
+        JPanel leaveCreationPane = new JPanel();
         leaveCreationPane.setBorder(BorderFactory.createTitledBorder("Create Leave"));
         leaveCreationPane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -429,31 +404,66 @@ public class GUI extends JPanel
         leaveCreationPane.add(generateLeaveTypeComboBox(),c);
 
         //LeaveDateLabel
+        c.gridy = 0;
         c.gridx = 2;
         c.gridwidth = 1;
         leaveCreationPane.add(leaveDateLabel,c);
 
-        //LeaveCommentsLabel
-        c.gridy = 1;
-        leaveCreationPane.add(leaveCommentsLabel,c);
-
         //LeaveDateTextField
         c.gridy = 0;
         c.gridx = 3;
-        c.gridwidth = 3;
-        leaveCreationPane.add(generateLeaveDateTextField(),c); //FIXME this isn't showing up
+        c.gridwidth = 2;
+        leaveCreationPane.add(generateLeaveDateTextField(),c);
+
+        //LeaveCommentsLabel
+        c.gridy = 1;
+        c.gridx = 2;
+        c.gridwidth = 1;
+        leaveCreationPane.add(leaveCommentsLabel,c);
 
         //LeaveCommentsTextField
         c.gridy = 1;
+        c.gridx = 3;
+        c.gridwidth = 2;
         leaveCreationPane.add(generateLeaveCommentsTextField(),c);
 
-        //LeaveCreateButton
+        //LeaveTimeSegment label
         c.gridy = 2;
+        c.gridx = 0;
+        c.gridwidth = 1;
+        leaveCreationPane.add(new JLabel("Time Taken"),c);
+
+        //Leave time period type combo box
+        c.gridy = 2;
+        c.gridx = 1;
+        c.gridwidth = 2;
+        leaveCreationPane.add(generateLeaveTimeSegmentsComboBox(),c);
+
+        //LeaveTimeSegment Text field
+        c.gridy = 2;
+        c.gridx = 4;
+        c.gridwidth = 2;
+        leaveCreationPane.add(generateLeaveTimeNumberTextField(),c);
+
+        //LeaveCreateButton
+        c.gridy = 3;
         c.gridx = 0;
         c.gridwidth = 6;
         leaveCreationPane.add(generateCreateLeaveButton(),c);
 
+        //Filter Button
+        c.gridy = 4;
+        c.gridx = 0;
+        c.gridwidth = 6;
+        leaveCreationPane.add(generateFilterYTDbutton(),c);
+
         return leaveCreationPane;
+    }
+
+    private void placer(GridBagConstraints c, int gridx, int gridy, int gridwidth) { //FIXME
+        c.gridwidth = gridwidth;
+        c.gridx = gridx;
+        c.gridy = gridy;
     }
 
     //EFFECTS: generates the leave type combo bos insid the leave creation pane
@@ -475,6 +485,22 @@ public class GUI extends JPanel
     private JTextField generateLeaveCommentsTextField() {
         leaveCommentsTextField = new JTextField(10);
         return leaveCommentsTextField;
+    }
+
+    //EFFECTS: generates the leave time segments combo box to select Days, hours or units (15 minute segments)
+    //         works in conjunction with the leaveTimeNumber to fully implement the leave taking method in GUI
+    private JComboBox generateLeaveTimeSegmentsComboBox() {
+        String[] leaveTimeSegments = { "Days", "Hours", "Units" };
+        leaveTimeSegmentsOptions = new JComboBox<>(leaveTimeSegments);
+        leaveTimeSegmentsOptions.setToolTipText("Units are in 15 minute increments");
+
+        return leaveTimeSegmentsOptions;
+    }
+
+    private JTextField generateLeaveTimeNumberTextField() {
+        leaveTimeSegmentsNumber = new JTextField(10);
+
+        return leaveTimeSegmentsNumber;
     }
 
     //EFFECTS: generates the select employee button at the top of the program.
@@ -530,10 +556,23 @@ public class GUI extends JPanel
         return editEmployeeButton;
     }
 
+    //EFFECTS: generates the edit employee button in the edit employee frame
+    private JButton generateFilterYTDbutton() {
+        editEmployeeButton = new JButton("Filter for YTD");
+        editEmployeeButton.setVerticalTextPosition(AbstractButton.CENTER);
+        editEmployeeButton.setHorizontalTextPosition(AbstractButton.LEADING);
+        editEmployeeButton.setMnemonic(KeyEvent.VK_F);
+        editEmployeeButton.setActionCommand("filter ytd");
+        editEmployeeButton.setToolTipText("(Alt + F) add leave to the selected employee");
+        editEmployeeButton.addActionListener(this);
+
+        return editEmployeeButton;
+    }
+
     //EFFECTS: Instantiates the GUI in a frame on the computer screen
     private static void createAndShowGUI() {
         //Create and set up the window.
-        frame = new JFrame("MAP - Attendance Program for Mid-Sized Business");
+        JFrame frame = new JFrame("MAP - Attendance Program for Mid-Sized Business");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add Contents
@@ -594,8 +633,7 @@ public class GUI extends JPanel
         if (selected) {
             Employee selectedEmployee = getSelectedEmployee();
             for (Leave leave1 : selectedEmployee.getLeaveTaken()) {
-                String toAdd = leave1.getDateOfLeave().toString() + "  "
-                        + leave1.getLeaveType().toString().toLowerCase(Locale.ROOT);
+                String toAdd = getLeaveString(leave1);
                 listModelLeave.addElement(toAdd);
             }
         }
@@ -660,10 +698,17 @@ public class GUI extends JPanel
                 loadFileGUI();
                 break;
             case "save":
-                saveFileGUI();
+                try {
+                    saveFileGUI();
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
                 break;
             case "credits":
                 displayCreditsGUI();
+                break;
+            case "filter ytd":
+                filterForYTD();
                 break;
         }
     }
@@ -749,22 +794,37 @@ public class GUI extends JPanel
             String leaveDate = leaveDateTextField.getText();
             String leaveComments = leaveCommentsTextField.getText();
             l = getLeaveType();
+            double t = getTimeSegments(parseInt(leaveTimeSegmentsNumber.getText()));
             if (l == null) {
                 return;
             }
             try {
-                regularLeaveTakingGUI(l, leaveDate, leaveComments);
+                regularLeaveTakingGUI(l, leaveDate, leaveComments, t);
             } catch (InvalidLeaveAmountException ex) {
                 int n = JOptionPane.showConfirmDialog(GUI.this,
                         "That employee has no remaining leave of that type, would you like to override?");
                 if (n == YES_OPTION) {
-                    overrideLeaveTakingGUI(l, leaveDate, leaveComments);
+                    overrideLeaveTakingGUI(l, leaveDate, leaveComments, t);
                 } else {
                     //do nothing
                     JOptionPane.showMessageDialog(GUI.this, "Leave Not Added");
                 }
             }
             refreshLeaveListView();
+        }
+    }
+
+    private double getTimeSegments(int numberOfSegments) {
+        double workHoursPerDay = getSelectedEmployee().getWorkHours();
+        switch (leaveTimeSegmentsOptions.getSelectedItem().toString().toLowerCase(Locale.ROOT)) {
+            case "days":
+                return (workHoursPerDay * 4) * numberOfSegments;
+            case "hours":
+                return numberOfSegments * 4;
+            case "units":
+                return numberOfSegments;
+            default:
+                return 0;
         }
     }
 
@@ -783,25 +843,42 @@ public class GUI extends JPanel
 
     //MODIFIES: an employee in this.state
     //EFFECTS: same functionalit as regularLeaveTakingGUI, except overrides the invalid leave amount exception
-    private void overrideLeaveTakingGUI(LeaveType l, String leaveDate, String leaveComments) {
+    private void overrideLeaveTakingGUI(LeaveType l, String leaveDate, String leaveComments, double timeSegments) {
         getSelectedEmployee().addLeaveToEmployee(
                 leaveDate,
                 l,
                 leaveComments,
-                getSelectedEmployee().getWorkHours() * 4);
+                timeSegments);
         refreshLeaveListView();
         JOptionPane.showMessageDialog(GUI.this, "Leave Added");
     }
 
+    private void filterForYTD() {
+        listModelLeave.removeAllElements();
+        for (Leave l : getSelectedEmployee().getLeaveTaken()) {
+            if (ChronoUnit.DAYS.between(l.getDateOfLeave(),state.getCurrentDate()) < 365) {
+                String toAdd = getLeaveString(l);
+                listModelLeave.addElement(toAdd);
+            }
+        }
+        leave.setModel(listModelLeave);
+    }
+
+    private String getLeaveString(Leave l) {
+        String toAdd = l.getDateOfLeave().toString() + "  "
+                + l.getLeaveType().toString().toLowerCase(Locale.ROOT);
+        return toAdd;
+    }
+
     //MODIFIES: an employee in this.state
     //EFFECTS: creates an instance of leave for an employee in the state
-    private void regularLeaveTakingGUI(LeaveType l, String leaveDate, String leaveComments)
+    private void regularLeaveTakingGUI(LeaveType l, String leaveDate, String leaveComments, double timeSegments)
             throws InvalidLeaveAmountException {
         getSelectedEmployee().takeLeave(
                 leaveDate,
                 l,
                 leaveComments,
-                getSelectedEmployee().getWorkHours() * 4);
+                timeSegments);
         refreshLeaveListView();
         JOptionPane.showMessageDialog(GUI.this, "Leave Added");
     }
@@ -809,11 +886,13 @@ public class GUI extends JPanel
     //MODIFIES: this
     //EFFECTS: loads a state from a file
     private void loadFileGUI() {
+        JFileChooser fileChooser = new JFileChooser();
         int returnValLoad = fileChooser.showOpenDialog(GUI.this);
+        fileChooser.setDialogTitle("Open");
 
         if (returnValLoad == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            jsonReader = new JsonReader(file.getPath());
+            JsonReader jsonReader = new JsonReader(file.getPath());
             String currentDate = state.getCurrentDate().toString();
             try {
                 this.state = jsonReader.read();
@@ -831,14 +910,18 @@ public class GUI extends JPanel
     }
 
     //EFFECTS: saves a state to file
-    private void saveFileGUI() {
+    private void saveFileGUI() throws FileNotFoundException {
+        JFileChooser fileChooser = new JFileChooser();
         int returnValSave = fileChooser.showSaveDialog(GUI.this);
+        fileChooser.setDialogTitle("Save");
 
         if (returnValSave == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            jsonWriter = new JsonWriter(file.getPath());
-
+            JsonWriter jsonWriter = new JsonWriter(file.getAbsolutePath());
+            jsonWriter.open();
             jsonWriter.write(this.state);
+            jsonWriter.close();
+
             JOptionPane.showMessageDialog(GUI.this,"File Saved to: " + file.getAbsolutePath());
         }
     }

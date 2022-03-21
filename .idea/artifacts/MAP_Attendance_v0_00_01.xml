@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="javafx" build-on-make="true" name="MAP-Attendance v0.00.01">
+  <artifact type="javafx" name="MAP-Attendance v0.00.01">
     <output-path>$PROJECT_DIR$/out/artifacts/MAP_Attendance_v0_00_01</output-path>
     <properties id="javafx-properties">
       <options>
