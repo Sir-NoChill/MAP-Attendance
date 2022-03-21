@@ -6,6 +6,7 @@ import exceptions.RoleNotFoundException;
 import model.leave.Leave;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 import static model.Employee.stringToRole;
 import static org.junit.jupiter.api.Assertions.*;
@@ -216,6 +217,17 @@ class EmployeeTest {
             testEmployee1.takeLeave(LocalDate.parse("2020-01-01"),HOLIDAY,"Commiting Arson",26);
             fail("InvalidLeaveAmountExcetption expected");
         } catch (InvalidLeaveAmountException e) {
+            //pass
+        }
+    }
+
+    @Test
+    void testTakeLeaveCase5_invalidLeaveType() {
+        try {
+            testEmployee1.takeLeave("2020-01-02",BEREAVEMENT,"LOL",23);
+        } catch (InvalidLeaveAmountException e) {
+            fail("Should not have thrown anything");
+        } catch (Exception ex) {
             //pass
         }
     }
