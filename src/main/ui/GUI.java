@@ -25,9 +25,11 @@ import java.util.Objects;
 
 import static java.awt.GridBagConstraints.BOTH;
 import static java.lang.Double.parseDouble;
+import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 import static javax.swing.SwingConstants.HORIZONTAL;
 import static javax.swing.SwingConstants.VERTICAL;
+import javax.swing.ImageIcon;
 import static model.Employee.stringToRole;
 import static model.Role.LEGAL_ASSISTANT;
 
@@ -37,6 +39,8 @@ public class GUI extends JPanel
         ActionListener {
 
     private State state = new State(LocalDate.now());
+
+    protected ImageIcon icon = new ImageIcon("components/images/Logovs.png", "logo");
 
     private JScrollPane employeeListScrollPane;
     private JScrollPane leaveListScrollPane;
@@ -100,6 +104,8 @@ public class GUI extends JPanel
     private JMenu fileMenu;
     private JMenuItem save;
     private JMenuItem load;
+    private JMenu info;
+    private JMenuItem credits;
 
     //File loading and Saving system
     private final JFileChooser fileChooser;
@@ -157,6 +163,7 @@ public class GUI extends JPanel
         menuBar = new JMenuBar();
 
         menuBar.add(generateFileMenu());
+        menuBar.add(generateInfoMenu());
 
         return menuBar;
     }
@@ -171,6 +178,14 @@ public class GUI extends JPanel
         return fileMenu;
     }
 
+    private JMenu generateInfoMenu() {
+        info = new JMenu("Info");
+        info.setMnemonic(KeyEvent.VK_I);
+
+        info.add(generateCreditMenuItem());
+        return info;
+    }
+
     private JMenuItem generateSaveMenuItem() {
         save = new JMenuItem("Save");
 
@@ -183,6 +198,14 @@ public class GUI extends JPanel
         load.setActionCommand("load");
 
         return load;
+    }
+
+    private JMenuItem generateCreditMenuItem() {
+        credits = new JMenuItem("Credits");
+        credits.addActionListener(this);
+        credits.setActionCommand("Credits");
+
+        return credits;
     }
 
     private JScrollPane generateEmployeeListScrollPane() {
@@ -598,6 +621,9 @@ public class GUI extends JPanel
             case "save":
                 saveFileGUI();
                 break;
+            case "credits":
+                displayCreditsGUI();
+                break;
         }
     }
 
@@ -612,7 +638,9 @@ public class GUI extends JPanel
                     employeeDepartmentField.getText());
             this.state.addEmployee(newEmployee);
             clearFields();
+            JOptionPane.showMessageDialog(GUI.this, "Employee created");
         } catch (RoleNotFoundException ex) {
+            JOptionPane.showMessageDialog(GUI.this, "Something went wrong, sorry");
             System.out.println("Failed to select employee");
         }
         refreshEmployeeListView();
@@ -649,6 +677,7 @@ public class GUI extends JPanel
                     em.setWorkHours(parseDouble(s));
                     break;
             }
+            JOptionPane.showMessageDialog(GUI.this, "Selected Employee has been edited");
             clearFields();
             setEmployeeInformation(em);
             refreshEmployeeListView();
@@ -670,24 +699,57 @@ public class GUI extends JPanel
             LeaveType l;
             String leaveDate = leaveDateTextField.getText();
             String leaveComments = leaveCommentsTextField.getText();
-            if (leaveTypeBox.getSelectedItem().toString().equals("Holiday")) {
-                l = LeaveType.HOLIDAY;
-            } else if (leaveTypeBox.getSelectedItem().toString().equals("Sick")) {
-                l = LeaveType.SICK;
-            } else {
+            l = getLeaveType();
+            if (l == null) {
                 return;
             }
             try {
-                getSelectedEmployee().takeLeave(
-                        leaveDate,
-                        l,
-                        leaveComments,
-                        getSelectedEmployee().getWorkHours() * 4);
+                regularLeaveTakingGUI(l, leaveDate, leaveComments);
             } catch (InvalidLeaveAmountException ex) {
-                // do nothing
+                int n = JOptionPane.showConfirmDialog(GUI.this,
+                        "That employee has no remaining leave of that type, would you like to override?");
+                if (n == YES_OPTION) {
+                    overrideLeaveTakingGUI(l, leaveDate, leaveComments);
+                } else {
+                    //do nothing
+                    JOptionPane.showMessageDialog(GUI.this, "Leave Not Added");
+                }
             }
             refreshLeaveListView();
         }
+    }
+
+    private LeaveType getLeaveType() {
+        LeaveType l;
+        if (leaveTypeBox.getSelectedItem().toString().equals("Holiday")) {
+            l = LeaveType.HOLIDAY;
+        } else if (leaveTypeBox.getSelectedItem().toString().equals("Sick")) {
+            l = LeaveType.SICK;
+        } else {
+            return null;
+        }
+        return l;
+    }
+
+    private void overrideLeaveTakingGUI(LeaveType l, String leaveDate, String leaveComments) {
+        getSelectedEmployee().addLeaveToEmployee(
+                leaveDate,
+                l,
+                leaveComments,
+                getSelectedEmployee().getWorkHours() * 4);
+        refreshLeaveListView();
+        JOptionPane.showMessageDialog(GUI.this, "Leave Added");
+    }
+
+    private void regularLeaveTakingGUI(LeaveType l, String leaveDate, String leaveComments)
+            throws InvalidLeaveAmountException {
+        getSelectedEmployee().takeLeave(
+                leaveDate,
+                l,
+                leaveComments,
+                getSelectedEmployee().getWorkHours() * 4);
+        refreshLeaveListView();
+        JOptionPane.showMessageDialog(GUI.this, "Leave Added");
     }
 
     private void loadFileGUI() {
@@ -696,16 +758,20 @@ public class GUI extends JPanel
         if (returnValLoad == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             jsonReader = new JsonReader(file.getPath());
+            String currentDate = state.getCurrentDate().toString();
             try {
                 this.state = jsonReader.read();
+                refreshEmployeeListView();
+                refreshLeaveListView();
+                state.update(LocalDate.now());
+
+                JOptionPane.showMessageDialog(GUI.this,"File Loaded "
+                        + "and updated from " + currentDate + " to " + LocalDate.now().toString());
             } catch (IOException ex) {
                 System.out.println("Unable to read file");
                 ex.printStackTrace();
             }
         }
-
-        refreshEmployeeListView();
-        refreshLeaveListView();
     }
 
     private void saveFileGUI() {
@@ -716,6 +782,7 @@ public class GUI extends JPanel
             jsonWriter = new JsonWriter(file.getPath());
 
             jsonWriter.write(this.state);
+            JOptionPane.showMessageDialog(GUI.this,"File Saved to: " + file.getAbsolutePath());
         }
     }
 
@@ -734,5 +801,11 @@ public class GUI extends JPanel
         } catch (EmployeeNotFoundException e) {
             return null;
         }
+    }
+
+    private void displayCreditsGUI() {
+        String message = "Created by Ayrton Chilibeck, for my wonderful mother "
+                + "who serves as an inspiration for my work and person.";
+        JOptionPane.showMessageDialog(GUI.this,message,"Credits",1,icon);
     }
 }
