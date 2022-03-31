@@ -69,3 +69,28 @@ given about two days of google
 14. Be able to load the state of a program on a different day (optionally)
 15. (implied by 12.) have the program change state appropriately from initial day to current day
     - [ ] in progress
+
+## Log Implementation output Example
+
+Thu Mar 31 12:23:07 PDT 2022
+Sick leave added for 2018-07-13 in employee Jerry. Leave left override in effect.
+
+
+Thu Mar 31 12:23:07 PDT 2022
+Employee Jerry created.
+
+
+Thu Mar 31 12:23:07 PDT 2022
+State loaded from: C:\Users\aa\Documents\AAMusic\AACode\MAP\testSave.json
+
+
+Thu Mar 31 12:23:38 PDT 2022
+Holiday leave added for 2019-02-03 in employee Jerry. Leave left override in effect.
+
+
+Thu Mar 31 12:24:35 PDT 2022
+Employee Marcus created.
+
+
+Thu Mar 31 12:24:58 PDT 2022
+Sick leave added for 2004-01-02 in employee Marcus.
