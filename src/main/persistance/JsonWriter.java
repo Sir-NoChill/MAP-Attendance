@@ -1,5 +1,8 @@
 package persistance;
 
+import model.Employee;
+import model.Event;
+import model.EventLog;
 import model.State;
 import org.json.JSONObject;
 
@@ -41,5 +44,8 @@ public class JsonWriter {
     // EFFECTS: writes string to file
     private void saveToFile(String json) {
         writer.print(json);
+        //Logging
+        Event e = new Event("State saved to file: " + this.destination);
+        EventLog.getInstance().logEvent(e);
     }
 }

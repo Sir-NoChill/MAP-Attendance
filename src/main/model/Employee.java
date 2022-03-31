@@ -81,14 +81,21 @@ public class Employee implements Writable {
             if (sickLeaveLeft < 0) {
                 throw new InvalidLeaveAmountException();
             }
+            //Logging
+            Event e = new Event("Sick leave added for " + date.toString() + " in employee " + this.name + ".");
+            EventLog.getInstance().logEvent(e);
         } else {
             leave = new Holiday(date, comment, timeSegments);
             this.subtractHolidayLeave(timeSegments);
             if (holidayLeft < 0) {
                 throw new InvalidLeaveAmountException();
             }
+            //Logging
+            Event e = new Event("Holiday leave added for " + date.toString() + " in employee " + this.name + ".");
+            EventLog.getInstance().logEvent(e);
         }
         this.leaveTaken.add(leave);
+
     }
 
     //REQUIRES:
@@ -105,6 +112,9 @@ public class Employee implements Writable {
             } else {
                 this.subtractSickLeave(timeSegments);
                 this.leaveTaken.add(leave);
+                //Logging
+                Event e = new Event("Sick leave added for " + date.toString() + " in employee " + this.name + ".");
+                EventLog.getInstance().logEvent(e);
             }
         } else if (leaveType == LeaveType.HOLIDAY) {
             leave = new Holiday(date1, comment,timeSegments); //IDEAS find a way to delete this if the leave is invalid
@@ -113,6 +123,9 @@ public class Employee implements Writable {
             } else {
                 this.subtractHolidayLeave(timeSegments);
                 this.leaveTaken.add(leave);
+                //Logging
+                Event e = new Event("Holiday leave added for " + date.toString() + " in employee " + this.name + ".");
+                EventLog.getInstance().logEvent(e);
             }
         }
     }
@@ -137,9 +150,17 @@ public class Employee implements Writable {
         if (leaveType == LeaveType.SICK) {
             leave = new Sick(date1, comment,timeSegments);
             this.subtractSickLeave(timeSegments);
+            //Logging
+            Event e = new Event("Sick leave added for " + date.toString()
+                    + " in employee " + this.name + ". Leave left override in effect.");
+            EventLog.getInstance().logEvent(e);
         } else {
             leave = new Holiday(date1, comment,timeSegments);
             this.subtractHolidayLeave(timeSegments);
+            //Logging
+            Event e = new Event("Holiday leave added for " + date.toString()
+                    + " in employee " + this.name + ". Leave left override in effect.");
+            EventLog.getInstance().logEvent(e);
         }
         this.leaveTaken.add(leave);
     }
@@ -149,6 +170,9 @@ public class Employee implements Writable {
     //EFFECTS:  Changes the number of holiday available to this
     public void accrueHoliday() { //Don't date assholes
         this.holidayLeft += holidayAccrual;
+        //Logging
+        Event e = new Event("Holiday accrued by " + this.name + "Employee. Amount: " + this.holidayAccrual);
+        EventLog.getInstance().logEvent(e);
     }
 
     //REQUIRES: sickDaysAccrued must be non-negative
@@ -156,6 +180,9 @@ public class Employee implements Writable {
     //EFFECTS:  Changes the number of sickDays available to this
     public void accrueSickDays() {
         this.sickLeaveLeft = sickLeaveAccrual;
+        //Logging
+        Event e = new Event("Sick leave accrued by " + this.name + "Employee. Amount: " + this.sickLeaveAccrual);
+        EventLog.getInstance().logEvent(e);
     }
 
     //REQUIRES: yearsOFService be non-negative
@@ -304,42 +331,72 @@ public class Employee implements Writable {
     }
 
     public void setAnniversary(LocalDate anniversary) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Anniversary changed from " + this.anniversary.toString() + " to " + anniversary.toString());
         this.anniversary = anniversary;
     }
 
     public void setAnniversary(String anniversary) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Anniversary changed from " + this.anniversary.toString() + " to " + anniversary);
         this.anniversary = LocalDate.parse(anniversary);
     }
 
     public void setRole(Role role) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Role changed from " + this.role + " to " + role.toString());
         this.role = role;
     }
 
     public void setName(String name) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Name changed from " + this.name + " to " + name);
         this.name = name;
     }
 
     public void setWorkHours(double workHours) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Work Hours changed from " + this.workHours + " to " + workHours);
         this.workHours = workHours;
     }
 
     public void setSupervisor(String supervisor) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Supervisor changed from " + this.supervisor + " to " + supervisor);
         this.supervisor = supervisor;
     }
 
     public void setDepartment(String department) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Department changed from " + this.department + " to " + department);
         this.department = department;
     }
 
     public void setHolidayLeft(double holidayLeft) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Holiday remaining changed from " + this.holidayLeft + " to " + holidayLeft);
         this.holidayLeft = holidayLeft;
     }
 
     public void setSickLeaveLeft(double sickLeaveLeft) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Sick Leave left changed from " + this.sickLeaveLeft + " to " + sickLeaveLeft);
         this.sickLeaveLeft = sickLeaveLeft;
     }
 
     public void setHolidayAccrual(double holidayAccrual) {
+        //Logging
+        Event e = new Event("Employee " + this.name + ":"
+                + " Holiday Accrual changed from " + this.holidayAccrual + " to " + holidayAccrual);
         this.holidayAccrual = holidayAccrual;
     }
 }

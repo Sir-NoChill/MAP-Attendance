@@ -9,9 +9,7 @@ import java.util.stream.Stream;
 
 import exceptions.FileLoadError;
 import exceptions.RoleNotFoundException;
-import model.Employee;
-import model.Role;
-import model.State;
+import model.*;
 import model.leave.LeaveType;
 import org.json.*;
 
@@ -29,7 +27,10 @@ public class JsonReader {
     public State read() throws IOException, FileLoadError {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
-        return parseState(jsonObject);
+        State s = parseState(jsonObject);
+        Event e = new Event("State loaded from: " + this.source);
+        EventLog.getInstance().logEvent(e);
+        return s;
     }
 
     //EFFECTS: converts a JSON file into a Java Readable String

@@ -4,6 +4,8 @@ import exceptions.EmployeeNotFoundException;
 import exceptions.InvalidLeaveAmountException;
 import exceptions.RoleNotFoundException;
 import model.Employee;
+import model.Event;
+import model.EventLog;
 import model.State;
 import model.leave.Leave;
 import model.leave.LeaveType;
@@ -89,6 +91,13 @@ public class GUI extends JPanel
     JLabel employeeDepartment = new JLabel();
 
     //File loading and Saving system
+    //Extra Functionality
+    //TODO
+    // -Add a list listener so that the selected employee changes
+    //     dynamically
+    // -Add reports
+    // -Add a better filtration system
+    // -Add a more visible notes field
 
     //EFFECTS: Generates a GUI
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
@@ -131,12 +140,11 @@ public class GUI extends JPanel
 
     //EFFECTS: creates the menu bar
     private JMenuBar generateMenuBar() {
-        //MENU BAR BUILDING
-        //private ItemListener itemListener;
         JMenuBar menuBar = new JMenuBar();
 
         menuBar.add(generateFileMenu());
         menuBar.add(generateInfoMenu());
+        menuBar.add(generateReportMenu());
 
         return menuBar;
     }
@@ -150,6 +158,18 @@ public class GUI extends JPanel
         fileMenu.add(generateLoadMenuItem());
 
         return fileMenu;
+    }
+
+    //EFFECTS: generates the "Reports" menu
+    private JMenu generateReportMenu() {
+        JMenu reportMenu = new JMenu("Reports");
+        reportMenu.setMnemonic(KeyEvent.VK_F);
+
+        //reportMenu.add(generateSickLeaveReportMenuItem());
+        //reportMenu.add(generateHolidayReportMenuItem());
+        //reportMenu.add(generateFullReportMenuItem());
+
+        return reportMenu;
     }
 
     //EFFECTS: generates the "info" menu item
@@ -475,7 +495,7 @@ public class GUI extends JPanel
     }
 
     //EFFECTS generates the leave date field that sits in the Leave Creation pane
-    //IDEAS should be changed to a java date picker
+    //IDEAS should be changed to a java date picker!!!
     private JTextField generateLeaveDateTextField() {
         leaveDateTextField = new JTextField(10); //text obtained by getText() (returns String)
         return leaveDateTextField;
@@ -650,8 +670,20 @@ public class GUI extends JPanel
     //PROGRAM ENTRY POINT
     //EFFECTS: entry point for the code
     public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                printEventLog(EventLog.getInstance());
+            }
+        }));
 
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
+
+    }
+
+    public static void printEventLog(EventLog eventLog) {
+        for (Event next : eventLog) {
+            System.out.println(next.toString() + "\n\n");
+        }
     }
 
     //EFFECTS: clears all text fields in the program

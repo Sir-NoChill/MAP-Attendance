@@ -34,6 +34,10 @@ public class State {
     //EFFECTS:  Adds an employee to the list of employees
     public void addEmployee(Employee employee) {
         this.listOfEmployees.add(employee);
+
+        //Event Logging
+        Event e = new Event("Employee " + employee.getName() + " created.");
+        EventLog.getInstance().logEvent(e);
     }
 
     //EFFECTS:  Returns an instance of Employee with matching name.
