@@ -590,7 +590,7 @@ public class GUI extends JPanel
     }
 
     //EFFECTS: Instantiates the GUI in a frame on the computer screen
-    private static void createAndShowGUI() {
+    static void createAndShowGUI() {
         //Create and set up the window.
         JFrame frame = new JFrame("MAP - Attendance Program for Mid-Sized Business");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
