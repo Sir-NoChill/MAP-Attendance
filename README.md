@@ -94,3 +94,13 @@ Employee Marcus created.
 
 Thu Mar 31 12:24:58 PDT 2022
 Sick leave added for 2004-01-02 in employee Marcus.
+
+## Phase 4, Task 3:
+
+![UML_Design_Diagram.png](UML_Design_Diagram.png)
+
+Most of the refactoring I would do with the program is inside the classes to make methods more
+general and easy to manipulate. That said, I might do the following:
+- Turn Leave.java into an abstract class
+- I feel like there is a better way to implement LeaveType, but I do not know how
+- Role may be able to be a class within the Employee Class
