@@ -11,6 +11,7 @@ import model.leave.Leave;
 import model.leave.LeaveType;
 import persistance.JsonReader;
 import persistance.JsonWriter;
+import ui.tools.HintText;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -98,6 +99,7 @@ public class GUI extends JPanel
     // -Add reports
     // -Add a better filtration system
     // -Add a more visible notes field
+    // -Add datePicker
 
     //EFFECTS: Generates a GUI
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
@@ -497,7 +499,7 @@ public class GUI extends JPanel
     //EFFECTS generates the leave date field that sits in the Leave Creation pane
     //IDEAS should be changed to a java date picker!!!
     private JTextField generateLeaveDateTextField() {
-        leaveDateTextField = new JTextField(10); //text obtained by getText() (returns String)
+        leaveDateTextField = new HintText("yyyy-mm-dd"); //text obtained by getText() (returns String)
         return leaveDateTextField;
     }
 
